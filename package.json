@@ -10,7 +10,9 @@
   "dependencies": {
   },
   "devDependencies": {
-    "jasmine-node": "1.5.0"
+    "coffee-script": "1.6.2",
+    "jasmine-dom":   "0.3.3",
+    "jasmine-node":  "1.5.0"
   },
   "engines": {
     "node": "*"

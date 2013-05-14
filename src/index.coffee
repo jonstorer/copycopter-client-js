@@ -1,5 +1,3 @@
-$ = window.jQuery or window.$
-
 class CopyCopter
   constructor: (options) ->
     @[key] = value for key, value of options
@@ -10,7 +8,6 @@ class CopyCopter
   t: (key, options) ->
     load(key)
 
-  load = ->
-    console.log arguments
+  load = -> console.log 'here'
 
-this.CopyCopter = CopyCopter
+module.exports = CopyCopter
