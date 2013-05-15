@@ -26,7 +26,7 @@ task 'watch', 'Watch src/ for changes', ->
     runTests()
 
 runTests = ->
-  run './node_modules/.bin/jasmine-dom --runner ./test/index.html--format=nice'
+  run './node_modules/.bin/jasmine-dom --runner ./test/index.html --format=nice'
 
 run = (command, callback) ->
   cmd = spawn '/bin/sh', ['-c', command]

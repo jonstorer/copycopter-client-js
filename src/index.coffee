@@ -10,4 +10,8 @@ class CopyCopter
 
   load = -> console.log 'here'
 
-module.exports = CopyCopter
+# Global
+@CopyCopter = CopyCopter
+
+# npm module
+module?.exports = CopyCopter
