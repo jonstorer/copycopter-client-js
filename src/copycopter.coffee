@@ -13,16 +13,14 @@ class CopyCopter
     defaultValue = options.defaultValue
     delete options.defaultValue
 
-    scope = key.split('.')
-    scope.unshift('en')
-
-    msg = @lookup(key, scope) || defaultValue
+    msg = @lookup(key) || defaultValue
     @interpolate(msg, options)
 
   # private
 
   lookup: (key, scope) ->
-    message = Object.create @translations
+    scope = ['en'].concat key.split('.')
+    message = @translations
     message = ( message[key] || {} ) for key in scope
     message if message.length
 
