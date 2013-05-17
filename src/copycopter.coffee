@@ -5,35 +5,30 @@ class CopyCopter
     throw 'please provide the apiKey' unless @apiKey?
     throw 'please provide the host'   unless @host?
 
-    @isLoaded     = false
-    @isLoading    = false
     @translations = { }
+    @load()
 
   translate: (key, options) ->
-    @load() unless @isLoaded
 
     defaultValue = options.defaultValue
     delete options.defaultValue
 
-    scope = key.split('.')
-    scope.unshift('en')
-
-    message = @translations
-    for key in scope
-      message = message[key] || {}
-    msg = if message.length then message else defaultValue
-
-    for key, value of options
-      regex = new RegExp("(.*)%{#{key}}(.*)")
-      if regex.test(msg)
-        msg = msg.replace(regex, "$1#{value}$2")
-      regex = new RegExp("(.*){{#{key}}}(.*)")
-      if regex.test(msg)
-        msg = msg.replace(regex, "$1#{value}$2")
-
-    msg
+    msg = @lookup(key) || defaultValue
+    @interpolate(msg, options)
 
   # private
+
+  lookup: (key, scope) ->
+    scope = ['en'].concat key.split('.')
+    message = @translations
+    message = ( message[key] || {} ) for key in scope
+    message if message.length
+
+  interpolate: (msg, scope) ->
+    for key, value of scope
+      for regex in [ new RegExp("(.*)%{#{key}}(.*)"), new RegExp("(.*){{#{key}}}(.*)") ]
+        msg = msg.replace(regex, "$1#{value}$2") if regex.test(msg)
+    msg
 
   url: ->
     "//#{@host}/api/v2/projects/#{@apiKey}/published_blurbs?format=hierarchy"
