@@ -80,11 +80,11 @@ describe 'CopyCopter', ->
         shape: 'cresent'
       }).should.eql 'Cut a cresent in a box'
 
-    it 'returns found translations', ->
+    it 'works with many translations', ->
       @jqXHR.resolve({ en: {
         step: {
           one:   'Cut a %{shape} in a box',
-          two:   'Put your %{item} in that box',
+          two:   'Put your {{item}} in that box',
           three: "Make her %{action} the box... and that's how you do it!"
         }
       } })

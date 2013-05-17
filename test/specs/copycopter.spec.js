@@ -124,12 +124,12 @@
           shape: 'cresent'
         }).should.eql('Cut a cresent in a box');
       });
-      return it('returns found translations', function() {
+      return it('works with many translations', function() {
         this.jqXHR.resolve({
           en: {
             step: {
               one: 'Cut a %{shape} in a box',
-              two: 'Put your %{item} in that box',
+              two: 'Put your {{item}} in that box',
               three: "Make her %{action} the box... and that's how you do it!"
             }
           }
