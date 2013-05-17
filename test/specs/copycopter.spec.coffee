@@ -81,12 +81,3 @@ describe 'CopyCopter', ->
         defaultValue: 'Cut a {{shape}} in the box',
         shape: 'cresent'
       }).should.eql 'Cut a cresent in a box'
-
-
-
-
-
-
-
-
-
