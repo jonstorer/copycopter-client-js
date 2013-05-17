@@ -1,31 +1,92 @@
 describe 'CopyCopter', ->
-  describe 'initializing', ->
+  describe 'when initializing', ->
     beforeEach ->
       @options =
         apiKey: 'key'
         host:   'example.com'
 
-    it 'throws an error if not created with an apiKey', ->
+    it 'takes an apiKey', ->
+      cc = new CopyCopter(@options)
+      cc.apiKey.should.equal('key')
+
+    it 'takes a host', ->
+      cc = new CopyCopter(@options)
+      cc.host.should.equal('example.com')
+
+    it 'throws an error without a host', ->
+      @options.host = undefined
+      (=> new CopyCopter @options ).should.Throw('please provide the host')
+
+    it 'throws an error without an apiKey', ->
       delete @options.apiKey
-      expect(=> new CopyCopter @options).toThrow('please provide the apiKey')
+      (=> new CopyCopter @options ).should.Throw('please provide the apiKey')
 
-    it 'sets the apiKey on the instance', ->
-      @options.apiKey = 'apiKey'
-      copycopter = new CopyCopter @options
-      copycopter.apiKey == 'apiKey'
-
-    it 'throws an error if not created with a host', ->
-      delete @options.host
-      expect(=> new CopyCopter @options).toThrow('please provide the host')
-
-    it 'sets the host on the instance', ->
-      @options.host = 'example.com'
-      copycopter = new CopyCopter @options
-      copycopter.host == 'example.com'
-
-  describe 'translating', ->
+  describe 'fetching the translations from the server', ->
     beforeEach ->
-      @copycopter = new CopyCopter { apiKey: 'key', host: 'example.com' }
+      @copycopter = new CopyCopter({
+        apiKey: 'key',
+        host:   'example.com'
+      })
 
-    it 'makes an ajax call to the correct url', ->
-      @copycopter.t('this', defaultValue: 'that')
+      @jqXHR = $.Deferred()
+
+      $.extend @jqXHR,
+        readyState:            0
+        setRequestHeader:      -> @
+        getAllResponseHeaders: ->
+        getResponseHeader:     ->
+        overrideMimeType:      -> @
+        abort:                 -> @reject(arguments); @
+        success:               @jqXHR.done
+        complete:              @jqXHR.done
+        error:                 @jqXHR.fail
+
+      sinon.stub(jQuery, 'ajax').returns(@jqXHR)
+      @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+
+    afterEach ->
+      jQuery.ajax.restore()
+
+    it 'fetches translations when it has none', ->
+      jQuery.ajax.should.have.been.calledWith({
+        url:       '//example.com/api/v2/projects/key/published_blurbs?format=hierarchy'
+        cache:     true
+        dataType:  'jsonp'
+      })
+
+    it 'loads the translations in memory', ->
+      @jqXHR.resolve({
+        en: { step: { one: 'Cut a hole in a box' } }
+      })
+      @copycopter.translations.en.step.one = 'Cut a hole in a box'
+
+    it 'returns found translations', ->
+      @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
+      @copycopter.translate('step.one', { defaultValue: 'Cut a whole in the box' }).should.eql 'Cut a hole in a box'
+
+    it 'returns the default translation when not found', ->
+      @jqXHR.resolve({ })
+      @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' }).should.eql 'Cut a hole in the box'
+
+    it 'interpolates %{key}', ->
+      @jqXHR.resolve({ en: { step: { one: 'Cut a %{shape} in a box' } } })
+      @copycopter.translate('step.one', {
+        defaultValue: 'Cut a %{shape} in the box',
+        shape: 'cresent'
+      }).should.eql 'Cut a cresent in a box'
+
+    it 'interpolates {{key}}', ->
+      @jqXHR.resolve({ en: { step: { one: 'Cut a {{shape}} in a box' } } })
+      @copycopter.translate('step.one', {
+        defaultValue: 'Cut a {{shape}} in the box',
+        shape: 'cresent'
+      }).should.eql 'Cut a cresent in a box'
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Live Translations</title>
+    <script type='text/javascript' src='lib/jquery.js'></script>
+    <!-- include source files here... -->
+    <script type='text/javascript' src='../lib/index.js'></script>
+    <script type='text/javascript'>
+      $(function() {
+        cc = new CopyCopter({
+          apiKey: '671ada692a700a3b8adceb463c278cfd',
+          host:   'copycopter.crowdtap.com'
+        });
+
+        console.log(cc.translate('this.is.a.test', { defaultValue: "Only a %{size} test", size: 'big' } ));
+      })();
+    </script>
+  </head>
+
+  <body>
+  </body>
+
+</html>

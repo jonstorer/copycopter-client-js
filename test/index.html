@@ -1,15 +1,21 @@
-<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'
-  'http://www.w3.org/TR/html4/loose.dtd'>
 <html>
-<head>
-  <title>Jasmine Spec Runner</title>
+  <head>
+    <title>Mocha Tests</title>
+    <link rel='stylesheet' href='../node_modules/mocha/mocha.css' />
+  </head>
 
-  <link rel='shortcut icon' type='image/png' href='lib/jasmine_favicon.png'>
-  <link rel='stylesheet' type='text/css' href='lib/jasmine.css'>
-  <script type='text/javascript' src='lib/jasmine.js'></script>
-  <script type='text/javascript' src='lib/jasmine-html.js'></script>
+  <body>
+    <div id='mocha'></div>
+  </body>
+
   <script type='text/javascript' src='lib/jquery.js'></script>
-  <script type='text/javascript' src='../node_modules/phantom-jasmine/lib/console-runner.js'></script>
+  <script type='text/javascript' src='../node_modules/mocha/mocha.js'></script>
+  <script type='text/javascript' src='../node_modules/sinon/lib/sinon.js'></script>
+  <script type='text/javascript' src='../node_modules/sinon/lib/sinon/spy.js'></script>
+  <script type='text/javascript' src='../node_modules/sinon/lib/sinon/stub.js'></script>
+  <script type='text/javascript' src='../node_modules/chai/chai.js'></script>
+  <script type='text/javascript' src='../node_modules/sinon-chai/lib/sinon-chai.js'></script>
+  <script type='text/javascript'>mocha.setup('bdd');</script>
 
   <!-- include source files here... -->
   <script type='text/javascript' src='../lib/index.js'></script>
@@ -17,17 +23,22 @@
   <!-- include spec files here... -->
   <script type='text/javascript' src='specs/copycopter.spec.js'></script>
 
+  <!-- setup test env here... -->
   <script type='text/javascript'>
     (function() {
-      var console_reporter = new jasmine.ConsoleReporter()
-      jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-      jasmine.getEnv().addReporter(console_reporter);
-      jasmine.getEnv().execute();
+      window.expect = chai.expect;
+      window.assert = chai.assert;
+
+      chai.should();
+
+      mocha.checkLeaks();
+      //mocha.globals(['jQuery']);
+
+      if(window.mochaPhantomJS){
+        mochaPhantomJS.run();
+      } else {
+        mocha.run();
+      }
     })();
   </script>
-
-</head>
-
-<body>
-</body>
 </html>

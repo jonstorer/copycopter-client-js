@@ -16,24 +16,9 @@ task 'watch', 'Watch src/ for changes', ->
     process.stderr.write data.toString()
   source.stdout.on 'data', (data) ->
     print data.toString()
-    runTests()
 
   specs = spawn 'node_modules/.bin/coffee', ['-w', '-c', 'test/specs']
   specs.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
   specs.stdout.on 'data', (data) ->
     print data.toString()
-    runTests()
-
-runTests = ->
-  run './node_modules/.bin/jasmine-dom --runner ./test/index.html --format=nice'
-
-run = (command, callback) ->
-  cmd = spawn '/bin/sh', ['-c', command]
-  cmd.stdout.on 'data', (data) -> process.stdout.write data
-  cmd.stderr.on 'data', (data) -> process.stderr.write data
-  cmd.on 'error', ->
-    console.log "Non-zero exit code running\n    #{command}"
-    process.exit 1
-  process.on 'SIGHUP', -> cmd.kill()
-  cmd.on 'exit', (code) -> callback() if callback? and code is 0
