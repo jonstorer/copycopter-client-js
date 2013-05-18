@@ -27,9 +27,8 @@ class CopyCopter
 
   interpolate = (msg, scope) ->
     for key, value of scope
-      for regex in [ new RegExp("(.*)%{#{key}}(.*)"), new RegExp("(.*){{#{key}}}(.*)") ]
-        if regex.test(msg)
-          msg = msg.replace(regex, "$1#{value}$2")
+      regex = new RegExp("(.*)(?:\%|\{){#{key}}}?(.*)",'i')
+      msg = msg.replace(regex, "$1#{value}$2") if regex.test(msg)
     msg
 
   url = ->
@@ -42,7 +41,6 @@ class CopyCopter
       dataType: 'jsonp'
     })
     request.success (data) -> translations = data
-
 
 # Global
 window?.CopyCopter = CopyCopter
