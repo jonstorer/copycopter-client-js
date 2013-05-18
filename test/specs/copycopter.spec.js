@@ -33,27 +33,21 @@
           host: 'example.com'
         };
       });
-      it('takes an apiKey', function() {
-        return new CopyCopter(this.options).apiKey.should.equal('key');
-      });
-      it('takes a host', function() {
-        return new CopyCopter(this.options).host.should.equal('example.com');
-      });
-      it('throws an error without a host', function() {
-        var _this = this;
-
-        delete this.options.host;
-        return (function() {
-          return new CopyCopter(_this.options);
-        }).should.Throw('please provide the host');
-      });
-      return it('throws an error without an apiKey', function() {
+      it('throws an error without an apiKey', function() {
         var _this = this;
 
         delete this.options.apiKey;
         return (function() {
           return new CopyCopter(_this.options);
         }).should.Throw('please provide the apiKey');
+      });
+      return it('throws an error without a host', function() {
+        var _this = this;
+
+        delete this.options.host;
+        return (function() {
+          return new CopyCopter(_this.options);
+        }).should.Throw('please provide the host');
       });
     });
     return describe('fetching the translations from the server', function() {
@@ -69,16 +63,6 @@
           cache: true,
           dataType: 'jsonp'
         });
-      });
-      it('loads the translations in memory', function() {
-        this.jqXHR.resolve({
-          en: {
-            step: {
-              one: 'Cut a hole in a box'
-            }
-          }
-        });
-        return this.copycopter.translations.en.step.one = 'Cut a hole in a box';
       });
       it('returns found translations', function() {
         this.jqXHR.resolve({

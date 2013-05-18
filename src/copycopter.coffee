@@ -1,50 +1,51 @@
 class CopyCopter
   constructor: (options) ->
-    @[key] = value for key, value of options
-
-    throw 'please provide the apiKey' unless @apiKey?
-    throw 'please provide the host'   unless @host?
-
-    @translations = { }
-    @load()
+    setOptions(options)
+    load()
 
   translate: (key, options) ->
-
     defaultValue = options.defaultValue
     delete options.defaultValue
 
-    msg = @lookup(key) || defaultValue
-    @interpolate(msg, options)
+    interpolate((lookup(key) || defaultValue), options)
 
   # private
 
-  lookup: (key, scope) ->
-    scope = ['en'].concat key.split('.')
-    message = @translations
-    message = ( message[key] || {} ) for key in scope
-    message if message.length
+  translations = {}
+  host         = undefined
+  apiKey       = undefined
 
-  interpolate: (msg, scope) ->
+  setOptions = (options) ->
+    throw 'please provide the apiKey' unless apiKey = options.apiKey
+    throw 'please provide the host'   unless host   = options.host
+
+  lookup = (key, scope) ->
+    scope = ['en'].concat key.split('.')
+    msg = translations
+    msg = msg?[key] for key in scope
+    msg if msg?
+
+  interpolate = (msg, scope) ->
     for key, value of scope
       for regex in [ new RegExp("(.*)%{#{key}}(.*)"), new RegExp("(.*){{#{key}}}(.*)") ]
-        msg = msg.replace(regex, "$1#{value}$2") if regex.test(msg)
+        if regex.test(msg)
+          msg = msg.replace(regex, "$1#{value}$2")
     msg
 
-  url: ->
-    "//#{@host}/api/v2/projects/#{@apiKey}/published_blurbs?format=hierarchy"
+  url = ->
+    "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
 
-  load: ->
+  load = ->
     request = jQuery.ajax({
-      url:      @url()
+      url:      url()
       cache:    true
       dataType: 'jsonp'
     })
-    request.always         => @isLoaded     = true
-    request.success (data) => @translations = data
+    request.success (data) -> translations = data
 
 
 # Global
-@CopyCopter = CopyCopter
+window?.CopyCopter = CopyCopter
 
 # npm module
 module?.exports = CopyCopter
