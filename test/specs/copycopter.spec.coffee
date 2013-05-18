@@ -22,21 +22,13 @@ describe 'CopyCopter', ->
         apiKey: 'key'
         host:   'example.com'
 
-    it 'takes an apiKey', ->
-      new CopyCopter(@options)
-        .apiKey.should.equal('key')
-
-    it 'takes a host', ->
-      new CopyCopter(@options)
-        .host.should.equal('example.com')
+    it 'throws an error without an apiKey', ->
+      delete @options.apiKey
+      (=> new CopyCopter @options ).should.Throw('please provide the apiKey')
 
     it 'throws an error without a host', ->
       delete @options.host
       (=> new CopyCopter @options ).should.Throw('please provide the host')
-
-    it 'throws an error without an apiKey', ->
-      delete @options.apiKey
-      (=> new CopyCopter @options ).should.Throw('please provide the apiKey')
 
   describe 'fetching the translations from the server', ->
     beforeEach ->
@@ -51,12 +43,6 @@ describe 'CopyCopter', ->
         cache:     true
         dataType:  'jsonp'
       })
-
-    it 'loads the translations in memory', ->
-      @jqXHR.resolve({
-        en: { step: { one: 'Cut a hole in a box' } }
-      })
-      @copycopter.translations.en.step.one = 'Cut a hole in a box'
 
     it 'returns found translations', ->
       @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
