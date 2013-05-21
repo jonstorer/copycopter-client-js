@@ -1,15 +1,21 @@
 {
-  "author": "Jonathon Storer",
-  "name": "CopyCopter-Client",
+  "name": "copycopter",
   "description": "A CopyCopter client written in Javascript",
   "version": "0.0.1",
+  "author": "Jonathon Storer <jonathon.scott.storer@gmail.com>",
+  "homepage": [
+    "https://github.com/jonstorer/copycopter-client-js"
+  ],
   "repository": {
     "url": "https://github.com/jonstorer/copycopter-client-js"
   },
   "main": "./lib/index.js",
-  "dependencies": {
-    "jquery": "=1.8.3"
-  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url":  "http://github.com/jonstorer/copycopter-client-js/raw/master/LICENSE"
+    }
+  ],
   "devDependencies": {
     "chai": "1.6.0",
     "coffee-script": "1.6.2",
