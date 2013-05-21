@@ -1,14 +1,14 @@
 CopyCopter = do ->
   create = (options) ->
-    # private
 
     # state variables
+    throw 'please provide the host'   unless host   = options.host
+    throw 'please provide the apiKey' unless apiKey = options.apiKey
 
-    translations = {}
-    host         = undefined
-    apiKey       = undefined
-    callbacks    = []
+    url          = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
     isLoaded     = false
+    translations = {}
+    callbacks    = []
 
     drain = ->
       cb() while cb = callbacks.shift()
@@ -25,24 +25,17 @@ CopyCopter = do ->
         msg = msg.replace(regex, "$1#{value}$2") if regex.test(msg)
       msg
 
-    url = ->
-      "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
-
-    load = ->
-      request = jQuery.ajax({ url: url(), cache: true, dataType: 'jsonp' })
+    do ->
+      request = jQuery.ajax({ url: url, cache: true, dataType: 'jsonp' })
       request.success (data) -> translations = data
       request.success        -> isLoaded = true
       request.always drain
-
-    setOptions = (options) ->
-      throw 'please provide the apiKey' unless apiKey = options.apiKey
-      throw 'please provide the host'   unless host   = options.host
 
     #public
 
     exports = {}
 
-    exports.t = exports.translate = (key, options) ->
+    exports.translate = (key, options) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
       interpolate((lookup(key) || defaultValue), options)
@@ -53,13 +46,12 @@ CopyCopter = do ->
       else
         callbacks.push callback
 
-    setOptions(options)
-    load()
+    # shortcut
+    exports.t = exports.translate
 
     exports
 
-  return (options) ->
-    create(options)
+  (options) -> create(options)
 
 # Global
 window?.CopyCopter = CopyCopter
