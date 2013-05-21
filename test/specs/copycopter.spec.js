@@ -50,7 +50,7 @@
         }).should.Throw('please provide the host');
       });
     });
-    return describe('fetching the translations from the server', function() {
+    describe('fetching the translations from the server', function() {
       beforeEach(function() {
         return this.copycopter = new CopyCopter({
           apiKey: 'key',
@@ -114,7 +114,7 @@
             step: {
               one: 'Cut a %{shape} in a box',
               two: 'Put your {{item}} in that box',
-              three: "Make her %{action} the box... and that's how you do it!"
+              three: "Make her %{action} the %{item}... and that's how you {{verb}} it!"
             }
           }
         });
@@ -127,9 +127,35 @@
           item: 'junk'
         }).should.eql('Put your junk in that box');
         return this.copycopter.translate('step.three', {
-          defaultValue: "Make her %{action} the box... and that's how you do it!",
-          action: 'open'
-        }).should.eql("Make her open the box... and that's how you do it!");
+          defaultValue: "Make her %{action} the %{item}... and that's how you {{verb}} it!",
+          action: 'open',
+          item: 'container',
+          verb: 'jump'
+        }).should.eql("Make her open the container... and that's how you jump it!");
+      });
+    });
+    return describe('#onLoaded', function() {
+      beforeEach(function() {
+        this.copycopter = new CopyCopter({
+          apiKey: 'key',
+          host: 'example.com'
+        });
+        return this.callback = sinon.spy();
+      });
+      it('takes a callback and fires the callback when the translations have loaded', function() {
+        this.copycopter.onLoaded(this.callback);
+        this.callback.should.not.have.been.called;
+        this.jqXHR.resolve({
+          en: {}
+        });
+        return this.callback.should.have.been.calledOnce;
+      });
+      return it('takes a callback and calls the callback if already loaded', function() {
+        this.jqXHR.resolve({
+          en: {}
+        });
+        this.copycopter.onLoaded(this.callback);
+        return this.callback.should.have.been.calledOnce;
       });
     });
   });

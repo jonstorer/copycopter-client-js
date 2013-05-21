@@ -71,18 +71,39 @@ describe 'CopyCopter', ->
         step: {
           one:   'Cut a %{shape} in a box',
           two:   'Put your {{item}} in that box',
-          three: "Make her %{action} the box... and that's how you do it!"
+          three: "Make her %{action} the %{item}... and that's how you {{verb}} it!"
         }
       } })
+
       @copycopter.translate('step.one', {
         defaultValue: 'Cut a %{shape} in the box',
         shape: 'hole'
       }).should.eql 'Cut a hole in a box'
+
       @copycopter.translate('step.two', {
         defaultValue: 'Put your %{item} in that box',
         item: 'junk'
       }).should.eql 'Put your junk in that box'
+
       @copycopter.translate('step.three', {
-        defaultValue: "Make her %{action} the box... and that's how you do it!",
-        action: 'open'
-      }).should.eql "Make her open the box... and that's how you do it!"
+        defaultValue: "Make her %{action} the %{item}... and that's how you {{verb}} it!",
+        action: 'open',
+        item: 'container',
+        verb: 'jump'
+      }).should.eql "Make her open the container... and that's how you jump it!"
+
+  describe '#onLoaded', ->
+    beforeEach ->
+      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
+      @callback   = sinon.spy()
+
+    it 'takes a callback and fires the callback when the translations have loaded', ->
+      @copycopter.onLoaded @callback
+      @callback.should.not.have.been.called
+      @jqXHR.resolve({ en: {} })
+      @callback.should.have.been.calledOnce
+
+    it 'takes a callback and calls the callback if already loaded', ->
+      @jqXHR.resolve({ en: {} })
+      @copycopter.onLoaded @callback
+      @callback.should.have.been.calledOnce
