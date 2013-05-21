@@ -1,7 +1,7 @@
 {
   "name": "copycopter",
   "description": "A CopyCopter client written in Javascript",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Jonathon Storer <jonathon.scott.storer@gmail.com>",
   "homepage": [
     "https://github.com/jonstorer/copycopter-client-js"
