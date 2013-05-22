@@ -1,1 +1,1 @@
-exports = require('./lib/copycopter');
+module.exports = require('./lib/copycopter');

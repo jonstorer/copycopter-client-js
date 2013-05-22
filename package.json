@@ -4,12 +4,12 @@
   "version": "0.0.2",
   "author": "Jonathon Storer <jonathon.scott.storer@gmail.com>",
   "homepage": [
-    "https://github.com/jonstorer/copycopter-client-js"
+    "http://github.com/jonstorer/copycopter-client-js"
   ],
   "repository": {
     "url": "https://github.com/jonstorer/copycopter-client-js"
   },
-  "main": "./lib/index.js",
+  "main": "./index.js",
   "licenses": [
     {
       "type": "MIT",
