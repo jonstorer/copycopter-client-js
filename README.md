@@ -18,13 +18,12 @@ In your app, require CopyCopter and create a client to your server.
   var CopyCopter = require('copycopter');
   var copycopter = CopyCopter({apiKey: 'key', host: 'copycopter.example.com'})
 ```
-    
+
 In your views, user `copycopter` as you would `I18n`
 
 ```js
   copycopter.translate('header.title', defaultValue: 'Welcome to CopyCopter!')
 ```
-
 
 ## Blocking
 
@@ -37,7 +36,6 @@ To block, do this:
     // Everything that needs translations to be loaded.
   });
 ```
-
 
 ## Gotchas
 
@@ -57,7 +55,7 @@ CopyCopter currently does not do any of the following: (all of these are on the 
 
 (The MIT License)
 
-Copyright (c) 2013 Jonathon Storer. 
+Copyright (c) 2013 Jonathon Storer.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
