@@ -40,7 +40,7 @@ CopyCopter = do ->
       delete options.defaultValue
       interpolate((lookup(key) || defaultValue), options)
 
-    exports.onLoaded = (callback) ->
+    exports.onTranslationsLoaded = (callback) ->
       if isLoaded
         callback()
       else

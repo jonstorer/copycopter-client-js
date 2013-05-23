@@ -92,18 +92,18 @@ describe 'CopyCopter', ->
         verb: 'jump'
       }).should.eql "Make her open the container... and that's how you jump it!"
 
-  describe '#onLoaded', ->
+  describe '#onTranslationsLoaded', ->
     beforeEach ->
       @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
       @callback   = sinon.spy()
 
     it 'takes a callback and fires the callback when the translations have loaded', ->
-      @copycopter.onLoaded @callback
+      @copycopter.onTranslationsLoaded @callback
       @callback.should.not.have.been.called
       @jqXHR.resolve({ en: {} })
       @callback.should.have.been.calledOnce
 
     it 'takes a callback and calls the callback if already loaded', ->
       @jqXHR.resolve({ en: {} })
-      @copycopter.onLoaded @callback
+      @copycopter.onTranslationsLoaded @callback
       @callback.should.have.been.calledOnce
