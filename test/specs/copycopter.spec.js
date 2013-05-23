@@ -134,7 +134,7 @@
         }).should.eql("Make her open the container... and that's how you jump it!");
       });
     });
-    return describe('#onLoaded', function() {
+    return describe('#onTranslationsLoaded', function() {
       beforeEach(function() {
         this.copycopter = new CopyCopter({
           apiKey: 'key',
@@ -143,7 +143,7 @@
         return this.callback = sinon.spy();
       });
       it('takes a callback and fires the callback when the translations have loaded', function() {
-        this.copycopter.onLoaded(this.callback);
+        this.copycopter.onTranslationsLoaded(this.callback);
         this.callback.should.not.have.been.called;
         this.jqXHR.resolve({
           en: {}
@@ -154,7 +154,7 @@
         this.jqXHR.resolve({
           en: {}
         });
-        this.copycopter.onLoaded(this.callback);
+        this.copycopter.onTranslationsLoaded(this.callback);
         return this.callback.should.have.been.calledOnce;
       });
     });
