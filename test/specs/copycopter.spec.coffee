@@ -107,3 +107,19 @@ describe 'CopyCopter', ->
       @jqXHR.resolve({ en: {} })
       @copycopter.onTranslationsLoaded @callback
       @callback.should.have.been.calledOnce
+
+  describe '#hasTranslation', ->
+    beforeEach ->
+      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
+      @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
+
+    it 'returns true when the key exists', ->
+      @copycopter.hasTranslation('step.one').should.be.true
+
+    it 'returns false when the key does not exist', ->
+      @copycopter.hasTranslation('step.two').should.be.false
+
+      #it 'takes a callback and calls the callback if already loaded', ->
+      #  @jqXHR.resolve({ en: {} })
+      #  @copycopter.onTranslationsLoaded @callback
+      #  @callback.should.have.been.calledOnce
