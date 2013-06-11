@@ -134,7 +134,7 @@
         }).should.eql("Make her open the container... and that's how you jump it!");
       });
     });
-    return describe('#onTranslationsLoaded', function() {
+    describe('#onTranslationsLoaded', function() {
       beforeEach(function() {
         this.copycopter = new CopyCopter({
           apiKey: 'key',
@@ -156,6 +156,27 @@
         });
         this.copycopter.onTranslationsLoaded(this.callback);
         return this.callback.should.have.been.calledOnce;
+      });
+    });
+    return describe('#hasTranslation', function() {
+      beforeEach(function() {
+        this.copycopter = new CopyCopter({
+          apiKey: 'key',
+          host: 'example.com'
+        });
+        return this.jqXHR.resolve({
+          en: {
+            step: {
+              one: 'Cut a hole in a box'
+            }
+          }
+        });
+      });
+      it('returns true when the key exists', function() {
+        return this.copycopter.hasTranslation('step.one').should.be["true"];
+      });
+      return it('returns false when the key does not exist', function() {
+        return this.copycopter.hasTranslation('step.two').should.be["false"];
       });
     });
   });

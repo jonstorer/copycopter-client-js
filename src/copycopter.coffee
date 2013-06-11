@@ -46,6 +46,9 @@ CopyCopter = do ->
       else
         callbacks.push callback
 
+    exports.hasTranslation = (key) ->
+      !!lookup(key)
+
     # shortcut
     exports.t = exports.translate
 
