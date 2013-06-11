@@ -118,8 +118,3 @@ describe 'CopyCopter', ->
 
     it 'returns false when the key does not exist', ->
       @copycopter.hasTranslation('step.two').should.be.false
-
-      #it 'takes a callback and calls the callback if already loaded', ->
-      #  @jqXHR.resolve({ en: {} })
-      #  @copycopter.onTranslationsLoaded @callback
-      #  @callback.should.have.been.calledOnce
