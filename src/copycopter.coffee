@@ -5,13 +5,25 @@ CopyCopter = do ->
     throw 'please provide the host'   unless host   = options.host
     throw 'please provide the apiKey' unless apiKey = options.apiKey
 
-    url          = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
+    getUrl       = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
+    postUrl      = "//#{host}/api/v2/projects/#{apiKey}/draft_blurbs"
     isLoaded     = false
     translations = {}
     callbacks    = []
 
     drain = ->
       cb() while cb = callbacks.shift()
+
+    createTranslation = (key, defaultValue) ->
+      data = {}
+      data[key] = defaultValue
+      jQuery.ajax
+        username:  'username'
+        password:  'sekret'
+        url:       postUrl
+        type:      'POST'
+        dataType:  'JSON'
+        data:      data
 
     lookup = (key, scope) ->
       scope = ['en'].concat key.split('.')
@@ -25,8 +37,19 @@ CopyCopter = do ->
         msg = msg.replace(regex, "$1#{value}$2") if regex.test(msg)
       msg
 
+    translate = (key, options = {}) ->
+      defaultValue = options.defaultValue
+      delete options.defaultValue
+      createTranslation(key, defaultValue) unless hasTranslation(key)
+      interpolate((lookup(key) || defaultValue), options)
+
+    onTranslationsLoaded = (callback) ->
+      if isLoaded then callback() else callbacks.push callback
+
+    hasTranslation = (key) -> !!lookup(key)
+
     do ->
-      request = jQuery.ajax({ url: url, cache: true, dataType: 'jsonp' })
+      request = jQuery.ajax({ url: getUrl, cache: true, dataType: 'jsonp' })
       request.success (data) -> translations = data
       request.success        -> isLoaded = true
       request.always drain
@@ -34,23 +57,11 @@ CopyCopter = do ->
     #public
 
     exports = {}
-
-    exports.translate = (key, options = {}) ->
-      defaultValue = options.defaultValue
-      delete options.defaultValue
-      interpolate((lookup(key) || defaultValue), options)
-
-    exports.onTranslationsLoaded = (callback) ->
-      if isLoaded
-        callback()
-      else
-        callbacks.push callback
-
-    exports.hasTranslation = (key) ->
-      !!lookup(key)
-
+    exports.translate            = translate
+    exports.onTranslationsLoaded = onTranslationsLoaded
+    exports.hasTranslation       = hasTranslation
     # shortcut
-    exports.t = exports.translate
+    exports.t = translate
 
     exports
 

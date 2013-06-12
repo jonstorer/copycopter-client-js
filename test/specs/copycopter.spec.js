@@ -50,7 +50,7 @@
         }).should.Throw('please provide the host');
       });
     });
-    describe('fetching the translations from the server', function() {
+    describe('#translate', function() {
       beforeEach(function() {
         return this.copycopter = new CopyCopter({
           apiKey: 'key',
@@ -84,8 +84,44 @@
       });
       it('returns the undefined when the defaultValue is not provided', function() {
         this.jqXHR.resolve({});
-        console.log(expect);
         return expect(this.copycopter.translate('step.one')).to.not.exist;
+      });
+      it('uploads the translation key and defaultValue when the translation does not exist', function() {
+        this.jqXHR.resolve({});
+        jQuery.ajax.restore();
+        this.post = $.Deferred();
+        $.extend(this.post, {
+          readyState: 0,
+          setRequestHeader: function() {
+            return this;
+          },
+          getAllResponseHeaders: function() {},
+          getResponseHeader: function() {},
+          overrideMimeType: function() {
+            return this;
+          },
+          abort: function() {
+            this.reject(arguments);
+            return this;
+          },
+          success: this.post.done,
+          complete: this.post.done,
+          error: this.post.fail
+        });
+        sinon.stub(jQuery, 'ajax').returns(this.post);
+        this.copycopter.translate('step.one', {
+          defaultValue: 'Cut a hole in the box'
+        });
+        return jQuery.ajax.should.have.been.calledWith({
+          username: 'username',
+          password: 'sekret',
+          url: '//example.com/api/v2/projects/key/draft_blurbs',
+          type: 'POST',
+          dataType: 'JSON',
+          data: {
+            'step.one': 'Cut a hole in the box'
+          }
+        });
       });
       it('interpolates %{key}', function() {
         this.jqXHR.resolve({

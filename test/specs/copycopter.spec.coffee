@@ -30,7 +30,7 @@ describe 'CopyCopter', ->
       delete @options.host
       (=> new CopyCopter @options ).should.Throw('please provide the host')
 
-  describe 'fetching the translations from the server', ->
+  describe '#translate', ->
     beforeEach ->
       @copycopter = new CopyCopter({
         apiKey: 'key',
@@ -54,8 +54,36 @@ describe 'CopyCopter', ->
 
     it 'returns the undefined when the defaultValue is not provided', ->
       @jqXHR.resolve({ })
-      console.log expect
       expect( @copycopter.translate('step.one') ).to.not.exist
+
+    it 'uploads the translation key and defaultValue when the translation does not exist', ->
+      @jqXHR.resolve({ })
+      jQuery.ajax.restore()
+
+      @post = $.Deferred()
+      $.extend @post,
+        readyState:            0
+        setRequestHeader:      -> @
+        getAllResponseHeaders: ->
+        getResponseHeader:     ->
+        overrideMimeType:      -> @
+        abort:                 -> @reject(arguments); @
+        success:               @post.done
+        complete:              @post.done
+        error:                 @post.fail
+
+      sinon.stub(jQuery, 'ajax').returns(@post)
+
+      @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+
+      jQuery.ajax.should.have.been.calledWith({
+        username:  'username'
+        password:  'sekret'
+        url:       '//example.com/api/v2/projects/key/draft_blurbs'
+        type:      'POST'
+        dataType:  'JSON'
+        data:      { 'step.one': 'Cut a hole in the box' }
+      })
 
     it 'interpolates %{key}', ->
       @jqXHR.resolve({ en: { step: { one: 'Cut a %{shape} in a box' } } })
