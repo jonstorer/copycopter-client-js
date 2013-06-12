@@ -82,6 +82,11 @@
           defaultValue: 'Cut a hole in the box'
         }).should.eql('Cut a hole in the box');
       });
+      it('returns the undefined when the defaultValue is not provided', function() {
+        this.jqXHR.resolve({});
+        console.log(expect);
+        return expect(this.copycopter.translate('step.one')).to.not.exist;
+      });
       it('interpolates %{key}', function() {
         this.jqXHR.resolve({
           en: {

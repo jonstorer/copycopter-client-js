@@ -52,6 +52,11 @@ describe 'CopyCopter', ->
       @jqXHR.resolve({ })
       @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' }).should.eql 'Cut a hole in the box'
 
+    it 'returns the undefined when the defaultValue is not provided', ->
+      @jqXHR.resolve({ })
+      console.log expect
+      expect( @copycopter.translate('step.one') ).to.not.exist
+
     it 'interpolates %{key}', ->
       @jqXHR.resolve({ en: { step: { one: 'Cut a %{shape} in a box' } } })
       @copycopter.translate('step.one', {
