@@ -35,7 +35,7 @@ CopyCopter = do ->
 
     exports = {}
 
-    exports.translate = (key, options) ->
+    exports.translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
       interpolate((lookup(key) || defaultValue), options)
