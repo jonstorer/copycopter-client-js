@@ -31,26 +31,28 @@ CopyCopter = do ->
       request.success        -> isLoaded = true
       request.always drain
 
-    #public
-
-    exports = {}
-
-    exports.translate = (key, options = {}) ->
+    translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
       interpolate((lookup(key) || defaultValue), options)
 
-    exports.onTranslationsLoaded = (callback) ->
+    onTranslationsLoaded = (callback) ->
       if isLoaded
         callback()
       else
         callbacks.push callback
 
-    exports.hasTranslation = (key) ->
-      !!lookup(key)
+    hasTranslation = (key) -> !!lookup(key)
 
+    #public
+
+    exports = {}
+
+    exports.translate            = translate
+    exports.onTranslationsLoaded = onTranslationsLoaded
+    exports.hasTranslation       = hasTranslation
     # shortcut
-    exports.t = exports.translate
+    exports.t = translate
 
     exports
 
