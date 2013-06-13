@@ -26,7 +26,7 @@
     afterEach(function() {
       return jQuery.ajax.restore();
     });
-    describe('when initializing', function() {
+    describe('initializing to translate', function() {
       beforeEach(function() {
         return this.options = {
           apiKey: 'key',
@@ -50,7 +50,108 @@
         }).should.Throw('please provide the host');
       });
     });
-    describe('fetching the translations from the server', function() {
+    describe('uploading missing translations', function() {
+      beforeEach(function() {
+        return this.options = {
+          apiKey: 'key',
+          host: 'example.com',
+          username: 'user',
+          password: 'sekret'
+        };
+      });
+      it('throws an error if a username is provided but not a password', function() {
+        var _this = this;
+
+        delete this.options.password;
+        return (function() {
+          return new CopyCopter(_this.options);
+        }).should.Throw('please provide a username and password');
+      });
+      it('throws an error if a password is provided but not a username', function() {
+        var _this = this;
+
+        delete this.options.username;
+        return (function() {
+          return new CopyCopter(_this.options);
+        }).should.Throw('please provide a username and password');
+      });
+      it('uploads the translation key and defaultValue when the translation does not exist', function() {
+        this.copycopter = new CopyCopter({
+          apiKey: 'key',
+          host: 'example.com',
+          username: 'user',
+          password: 'sekret'
+        });
+        this.jqXHR.resolve({});
+        jQuery.ajax.restore();
+        this.post = $.Deferred();
+        $.extend(this.post, {
+          readyState: 0,
+          setRequestHeader: function() {
+            return this;
+          },
+          getAllResponseHeaders: function() {},
+          getResponseHeader: function() {},
+          overrideMimeType: function() {
+            return this;
+          },
+          abort: function() {
+            this.reject(arguments);
+            return this;
+          },
+          success: this.post.done,
+          complete: this.post.done,
+          error: this.post.fail
+        });
+        sinon.stub(jQuery, 'ajax').returns(this.post);
+        this.copycopter.translate('step.one', {
+          defaultValue: 'Cut a hole in the box'
+        });
+        return jQuery.ajax.should.have.been.calledWith({
+          username: 'user',
+          password: 'sekret',
+          url: '//example.com/api/v2/projects/key/draft_blurbs',
+          type: 'POST',
+          dataType: 'JSON',
+          data: {
+            'step.one': 'Cut a hole in the box'
+          }
+        });
+      });
+      return it('does not attempt to upload missing translations when missing the username and password', function() {
+        this.copycopter = new CopyCopter({
+          apiKey: 'key',
+          host: 'example.com'
+        });
+        this.jqXHR.resolve({});
+        jQuery.ajax.restore();
+        this.post = $.Deferred();
+        $.extend(this.post, {
+          readyState: 0,
+          setRequestHeader: function() {
+            return this;
+          },
+          getAllResponseHeaders: function() {},
+          getResponseHeader: function() {},
+          overrideMimeType: function() {
+            return this;
+          },
+          abort: function() {
+            this.reject(arguments);
+            return this;
+          },
+          success: this.post.done,
+          complete: this.post.done,
+          error: this.post.fail
+        });
+        sinon.stub(jQuery, 'ajax').returns(this.post);
+        this.copycopter.translate('step.one', {
+          defaultValue: 'Cut a hole in the box'
+        });
+        return jQuery.ajax.should.not.have.been.called;
+      });
+    });
+    describe('#translate', function() {
       beforeEach(function() {
         return this.copycopter = new CopyCopter({
           apiKey: 'key',
@@ -84,7 +185,6 @@
       });
       it('returns the undefined when the defaultValue is not provided', function() {
         this.jqXHR.resolve({});
-        console.log(expect);
         return expect(this.copycopter.translate('step.one')).to.not.exist;
       });
       it('interpolates %{key}', function() {

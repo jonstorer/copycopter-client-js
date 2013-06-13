@@ -16,7 +16,7 @@ describe 'CopyCopter', ->
 
   afterEach -> jQuery.ajax.restore()
 
-  describe 'when initializing', ->
+  describe 'initializing to translate', ->
     beforeEach ->
       @options =
         apiKey: 'key'
@@ -30,7 +30,82 @@ describe 'CopyCopter', ->
       delete @options.host
       (=> new CopyCopter @options ).should.Throw('please provide the host')
 
-  describe 'fetching the translations from the server', ->
+  describe 'uploading missing translations', ->
+    beforeEach ->
+      @options =
+        apiKey:   'key'
+        host:     'example.com'
+        username: 'user'
+        password: 'sekret'
+
+    it 'throws an error if a username is provided but not a password', ->
+      delete @options.password
+      (=> new CopyCopter @options ).should.Throw('please provide a username and password')
+
+    it 'throws an error if a password is provided but not a username', ->
+      delete @options.username
+      (=> new CopyCopter @options ).should.Throw('please provide a username and password')
+
+    it 'uploads the translation key and defaultValue when the translation does not exist', ->
+      @copycopter = new CopyCopter({
+        apiKey:    'key',
+        host:      'example.com'
+        username:  'user'
+        password:  'sekret'
+      })
+      @jqXHR.resolve({ })
+      jQuery.ajax.restore()
+      @post = $.Deferred()
+      $.extend @post,
+        readyState:            0
+        setRequestHeader:      -> @
+        getAllResponseHeaders: ->
+        getResponseHeader:     ->
+        overrideMimeType:      -> @
+        abort:                 -> @reject(arguments); @
+        success:               @post.done
+        complete:              @post.done
+        error:                 @post.fail
+
+      sinon.stub(jQuery, 'ajax').returns(@post)
+
+      @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+
+      jQuery.ajax.should.have.been.calledWith({
+        username:  'user'
+        password:  'sekret'
+        url:       '//example.com/api/v2/projects/key/draft_blurbs'
+        type:      'POST'
+        dataType:  'JSON'
+        data:      { 'step.one': 'Cut a hole in the box' }
+      })
+
+    it 'does not attempt to upload missing translations when missing the username and password', ->
+      @copycopter = new CopyCopter({
+        apiKey:    'key'
+        host:      'example.com'
+      })
+      @jqXHR.resolve({ })
+      jQuery.ajax.restore()
+      @post = $.Deferred()
+      $.extend @post,
+        readyState:            0
+        setRequestHeader:      -> @
+        getAllResponseHeaders: ->
+        getResponseHeader:     ->
+        overrideMimeType:      -> @
+        abort:                 -> @reject(arguments); @
+        success:               @post.done
+        complete:              @post.done
+        error:                 @post.fail
+
+      sinon.stub(jQuery, 'ajax').returns(@post)
+
+      @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+
+      jQuery.ajax.should.not.have.been.called
+
+  describe '#translate', ->
     beforeEach ->
       @copycopter = new CopyCopter({
         apiKey: 'key',
@@ -54,7 +129,6 @@ describe 'CopyCopter', ->
 
     it 'returns the undefined when the defaultValue is not provided', ->
       @jqXHR.resolve({ })
-      console.log expect
       expect( @copycopter.translate('step.one') ).to.not.exist
 
     it 'interpolates %{key}', ->
@@ -99,7 +173,10 @@ describe 'CopyCopter', ->
 
   describe '#onTranslationsLoaded', ->
     beforeEach ->
-      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
+      @copycopter = new CopyCopter({
+        apiKey: 'key',
+        host:   'example.com'
+      })
       @callback   = sinon.spy()
 
     it 'takes a callback and fires the callback when the translations have loaded', ->
@@ -115,7 +192,10 @@ describe 'CopyCopter', ->
 
   describe '#hasTranslation', ->
     beforeEach ->
-      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
+      @copycopter = new CopyCopter({
+        apiKey: 'key',
+        host:   'example.com'
+      })
       @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
 
     it 'returns true when the key exists', ->
