@@ -63,6 +63,7 @@ CopyCopter = do ->
     #public
 
     exports = {}
+
     exports.translate            = translate
     exports.onTranslationsLoaded = onTranslationsLoaded
     exports.hasTranslation       = hasTranslation
