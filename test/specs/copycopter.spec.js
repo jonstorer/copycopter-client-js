@@ -26,11 +26,13 @@
     afterEach(function() {
       return jQuery.ajax.restore();
     });
-    describe('when initializing', function() {
+    describe('initializing to translate', function() {
       beforeEach(function() {
         return this.options = {
           apiKey: 'key',
-          host: 'example.com'
+          host: 'example.com',
+          username: 'username',
+          password: 'sekret'
         };
       });
       it('throws an error without an apiKey', function() {
@@ -41,7 +43,7 @@
           return new CopyCopter(_this.options);
         }).should.Throw('please provide the apiKey');
       });
-      return it('throws an error without a host', function() {
+      it('throws an error without a host', function() {
         var _this = this;
 
         delete this.options.host;
@@ -49,12 +51,30 @@
           return new CopyCopter(_this.options);
         }).should.Throw('please provide the host');
       });
+      it('throws an error without a username', function() {
+        var _this = this;
+
+        delete this.options.username;
+        return (function() {
+          return new CopyCopter(_this.options);
+        }).should.Throw('please provide the username');
+      });
+      return it('throws an error without a password', function() {
+        var _this = this;
+
+        delete this.options.password;
+        return (function() {
+          return new CopyCopter(_this.options);
+        }).should.Throw('please provide the password');
+      });
     });
     describe('#translate', function() {
       beforeEach(function() {
         return this.copycopter = new CopyCopter({
           apiKey: 'key',
-          host: 'example.com'
+          host: 'example.com',
+          username: 'username',
+          password: 'sekret'
         });
       });
       it('fetches translations when it has none', function() {
@@ -179,7 +199,9 @@
       beforeEach(function() {
         this.copycopter = new CopyCopter({
           apiKey: 'key',
-          host: 'example.com'
+          host: 'example.com',
+          username: 'username',
+          password: 'sekret'
         });
         return this.callback = sinon.spy();
       });
@@ -203,7 +225,9 @@
       beforeEach(function() {
         this.copycopter = new CopyCopter({
           apiKey: 'key',
-          host: 'example.com'
+          host: 'example.com',
+          username: 'username',
+          password: 'sekret'
         });
         return this.jqXHR.resolve({
           en: {

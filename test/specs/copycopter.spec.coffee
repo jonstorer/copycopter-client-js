@@ -16,11 +16,13 @@ describe 'CopyCopter', ->
 
   afterEach -> jQuery.ajax.restore()
 
-  describe 'when initializing', ->
+  describe 'initializing to translate', ->
     beforeEach ->
       @options =
-        apiKey: 'key'
-        host:   'example.com'
+        apiKey:   'key'
+        host:     'example.com'
+        username: 'username'
+        password: 'sekret'
 
     it 'throws an error without an apiKey', ->
       delete @options.apiKey
@@ -30,11 +32,21 @@ describe 'CopyCopter', ->
       delete @options.host
       (=> new CopyCopter @options ).should.Throw('please provide the host')
 
+    it 'throws an error without a username', ->
+      delete @options.username
+      (=> new CopyCopter @options ).should.Throw('please provide the username')
+
+    it 'throws an error without a password', ->
+      delete @options.password
+      (=> new CopyCopter @options ).should.Throw('please provide the password')
+
   describe '#translate', ->
     beforeEach ->
       @copycopter = new CopyCopter({
-        apiKey: 'key',
-        host:   'example.com'
+        apiKey:   'key',
+        host:     'example.com'
+        username: 'username'
+        password: 'sekret'
       })
 
     it 'fetches translations when it has none', ->
@@ -127,7 +139,12 @@ describe 'CopyCopter', ->
 
   describe '#onTranslationsLoaded', ->
     beforeEach ->
-      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
+      @copycopter = new CopyCopter({
+        apiKey:    'key'
+        host:      'example.com'
+        username:  'username'
+        password:  'sekret'
+      })
       @callback   = sinon.spy()
 
     it 'takes a callback and fires the callback when the translations have loaded', ->
@@ -143,7 +160,12 @@ describe 'CopyCopter', ->
 
   describe '#hasTranslation', ->
     beforeEach ->
-      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
+      @copycopter = new CopyCopter({
+        apiKey:    'key'
+        host:      'example.com'
+        username:  'username'
+        password:  'sekret'
+      })
       @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
 
     it 'returns true when the key exists', ->

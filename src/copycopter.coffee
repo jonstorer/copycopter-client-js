@@ -2,8 +2,10 @@ CopyCopter = do ->
   create = (options) ->
 
     # state variables
-    throw 'please provide the host'   unless host   = options.host
-    throw 'please provide the apiKey' unless apiKey = options.apiKey
+    throw 'please provide the host'     unless host     = options.host
+    throw 'please provide the apiKey'   unless apiKey   = options.apiKey
+    throw 'please provide the username' unless username = options.username
+    throw 'please provide the password' unless password = options.password
 
     getUrl       = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
     postUrl      = "//#{host}/api/v2/projects/#{apiKey}/draft_blurbs"
@@ -18,8 +20,8 @@ CopyCopter = do ->
       data = {}
       data[key] = defaultValue
       jQuery.ajax
-        username:  'username'
-        password:  'sekret'
+        username:  username
+        password:  password
         url:       postUrl
         type:      'POST'
         dataType:  'JSON'
