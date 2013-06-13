@@ -4,8 +4,12 @@ CopyCopter = do ->
     # state variables
     throw 'please provide the host'     unless host     = options.host
     throw 'please provide the apiKey'   unless apiKey   = options.apiKey
-    throw 'please provide the username' unless username = options.username
-    throw 'please provide the password' unless password = options.password
+
+    username = options.username
+    password = options.password
+
+    throw 'please provide a username and password' if username? ^ password?
+    uploadTranslations = username? && password?
 
     getUrl       = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
     postUrl      = "//#{host}/api/v2/projects/#{apiKey}/draft_blurbs"
@@ -42,7 +46,7 @@ CopyCopter = do ->
     translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
-      createTranslation(key, defaultValue) unless hasTranslation(key)
+      createTranslation(key, defaultValue) if uploadTranslations && !hasTranslation(key)
       interpolate((lookup(key) || defaultValue), options)
 
     onTranslationsLoaded = (callback) ->
