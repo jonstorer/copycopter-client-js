@@ -2,14 +2,8 @@ CopyCopter = do ->
   create = (options) ->
 
     # state variables
-    throw 'please provide the host'     unless host     = options.host
-    throw 'please provide the apiKey'   unless apiKey   = options.apiKey
-
-    username = options.username
-    password = options.password
-
-    throw 'please provide a username and password' if username? ^ password?
-    uploadTranslations = username? && password?
+    throw 'please provide the host'   unless host   = options.host
+    throw 'please provide the apiKey' unless apiKey = options.apiKey
 
     getUrl       = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
     postUrl      = "//#{host}/api/v2/projects/#{apiKey}/draft_blurbs"
@@ -22,14 +16,8 @@ CopyCopter = do ->
 
     createTranslation = (key, defaultValue) ->
       data = {}
-      data[key] = defaultValue
-      jQuery.ajax
-        username:  username
-        password:  password
-        url:       postUrl
-        type:      'POST'
-        dataType:  'JSON'
-        data:      data
+      data["en.#{key}"] = defaultValue
+      jQuery.ajax({ url: postUrl, dataType: 'jsonp', data: data })
 
     lookup = (key, scope) ->
       scope = ['en'].concat key.split('.')
@@ -46,7 +34,7 @@ CopyCopter = do ->
     translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
-      createTranslation(key, defaultValue) if uploadTranslations && !hasTranslation(key)
+      createTranslation(key, defaultValue) unless hasTranslation(key)
       interpolate((lookup(key) || defaultValue), options)
 
     onTranslationsLoaded = (callback) ->
