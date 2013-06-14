@@ -38,72 +38,31 @@ describe 'CopyCopter', ->
         username: 'user'
         password: 'sekret'
 
-    it 'throws an error if a username is provided but not a password', ->
-      delete @options.password
-      (=> new CopyCopter @options ).should.Throw('please provide a username and password')
-
-    it 'throws an error if a password is provided but not a username', ->
-      delete @options.username
-      (=> new CopyCopter @options ).should.Throw('please provide a username and password')
-
     it 'uploads the translation key and defaultValue when the translation does not exist', ->
-      @copycopter = new CopyCopter({
-        apiKey:    'key',
-        host:      'example.com'
-        username:  'user'
-        password:  'sekret'
-      })
+      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
       @jqXHR.resolve({ })
       jQuery.ajax.restore()
-      @post = $.Deferred()
-      $.extend @post,
+      @jqXHR = $.Deferred()
+      $.extend @jqXHR,
         readyState:            0
         setRequestHeader:      -> @
         getAllResponseHeaders: ->
         getResponseHeader:     ->
         overrideMimeType:      -> @
         abort:                 -> @reject(arguments); @
-        success:               @post.done
-        complete:              @post.done
-        error:                 @post.fail
+        success:               @jqXHR.done
+        complete:              @jqXHR.done
+        error:                 @jqXHR.fail
 
-      sinon.stub(jQuery, 'ajax').returns(@post)
+      sinon.stub(jQuery, 'ajax').returns(@jqXHR)
 
       @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
 
       jQuery.ajax.should.have.been.calledWith({
-        username:  'user'
-        password:  'sekret'
-        url:       '//example.com/api/v2/projects/key/draft_blurbs'
-        type:      'POST'
-        dataType:  'JSON'
-        data:      { 'step.one': 'Cut a hole in the box' }
+        url:      '//example.com/api/v2/projects/key/draft_blurbs'
+        dataType: 'jsonp'
+        data:     { 'en.step.one': 'Cut a hole in the box' }
       })
-
-    it 'does not attempt to upload missing translations when missing the username and password', ->
-      @copycopter = new CopyCopter({
-        apiKey:    'key'
-        host:      'example.com'
-      })
-      @jqXHR.resolve({ })
-      jQuery.ajax.restore()
-      @post = $.Deferred()
-      $.extend @post,
-        readyState:            0
-        setRequestHeader:      -> @
-        getAllResponseHeaders: ->
-        getResponseHeader:     ->
-        overrideMimeType:      -> @
-        abort:                 -> @reject(arguments); @
-        success:               @post.done
-        complete:              @post.done
-        error:                 @post.fail
-
-      sinon.stub(jQuery, 'ajax').returns(@post)
-
-      @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
-
-      jQuery.ajax.should.not.have.been.called
 
   describe '#translate', ->
     beforeEach ->
