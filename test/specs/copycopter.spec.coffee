@@ -18,9 +18,7 @@ describe 'CopyCopter', ->
 
   describe 'initializing to translate', ->
     beforeEach ->
-      @options =
-        apiKey: 'key'
-        host:   'example.com'
+      @options = { apiKey: 'key', host: 'example.com' }
 
     it 'throws an error without an apiKey', ->
       delete @options.apiKey
@@ -132,10 +130,7 @@ describe 'CopyCopter', ->
 
   describe '#onTranslationsLoaded', ->
     beforeEach ->
-      @copycopter = new CopyCopter({
-        apiKey: 'key',
-        host:   'example.com'
-      })
+      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
       @callback   = sinon.spy()
 
     it 'takes a callback and fires the callback when the translations have loaded', ->
@@ -151,10 +146,7 @@ describe 'CopyCopter', ->
 
   describe '#hasTranslation', ->
     beforeEach ->
-      @copycopter = new CopyCopter({
-        apiKey: 'key',
-        host:   'example.com'
-      })
+      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
       @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
 
     it 'returns true when the key exists', ->
