@@ -52,48 +52,46 @@
     });
     describe('uploading missing translations', function() {
       beforeEach(function() {
-        return this.options = {
-          apiKey: 'key',
-          host: 'example.com',
-          username: 'user',
-          password: 'sekret'
-        };
-      });
-      return it('uploads the translation key and defaultValue when the translation does not exist', function() {
+        this.clock = sinon.useFakeTimers();
         this.copycopter = new CopyCopter({
           apiKey: 'key',
           host: 'example.com'
         });
-        this.jqXHR.resolve({});
-        jQuery.ajax.restore();
-        this.jqXHR = $.Deferred();
-        $.extend(this.jqXHR, {
-          readyState: 0,
-          setRequestHeader: function() {
-            return this;
-          },
-          getAllResponseHeaders: function() {},
-          getResponseHeader: function() {},
-          overrideMimeType: function() {
-            return this;
-          },
-          abort: function() {
-            this.reject(arguments);
-            return this;
-          },
-          success: this.jqXHR.done,
-          complete: this.jqXHR.done,
-          error: this.jqXHR.fail
-        });
-        sinon.stub(jQuery, 'ajax').returns(this.jqXHR);
         this.copycopter.translate('step.one', {
-          defaultValue: 'Cut a hole in the box'
+          defaultValue: 'Cut a hole in the %{item}.'
         });
+        this.copycopter.translate('step.two', {
+          defaultValue: 'Place your {{body_part}} in that %{item}.'
+        });
+        return this.copycopter.translate('step.three', {
+          defaultValue: 'Make her {{action}} that %{item}.'
+        });
+      });
+      afterEach(function() {
+        return this.clock.restore();
+      });
+      it('waits to upload translations', function() {
+        return jQuery.ajax.should.not.have.been.calledWith({
+          url: '//example.com/api/v2/projects/key/draft_blurbs',
+          dataType: 'jsonp',
+          data: {
+            '_method': 'POST',
+            'en.step.one': 'Cut a hole in the %{item}.',
+            'en.step.two': 'Place your {{body_part}} in that %{item}.',
+            'en.step.three': 'Make her {{action}} that %{item}.'
+          }
+        });
+      });
+      return it('uploads new translations after 5 seconds', function() {
+        this.clock.tick(5001);
         return jQuery.ajax.should.have.been.calledWith({
           url: '//example.com/api/v2/projects/key/draft_blurbs',
           dataType: 'jsonp',
           data: {
-            'en.step.one': 'Cut a hole in the box'
+            '_method': 'POST',
+            'en.step.one': 'Cut a hole in the %{item}.',
+            'en.step.two': 'Place your {{body_part}} in that %{item}.',
+            'en.step.three': 'Make her {{action}} that %{item}.'
           }
         });
       });
@@ -130,7 +128,7 @@
           defaultValue: 'Cut a hole in the box'
         }).should.eql('Cut a hole in the box');
       });
-      it('returns the undefined when the defaultValue is not provided', function() {
+      it('returns undefined when the defaultValue is not provided', function() {
         this.jqXHR.resolve({});
         return expect(this.copycopter.translate('step.one')).to.not.exist;
       });
@@ -176,8 +174,8 @@
         }).should.eql('Cut a hole in a box');
         this.copycopter.translate('step.two', {
           defaultValue: 'Put your %{item} in that box',
-          item: 'junk'
-        }).should.eql('Put your junk in that box');
+          item: 'hand'
+        }).should.eql('Put your hand in that box');
         return this.copycopter.translate('step.three', {
           defaultValue: "Make her %{action} the %{item}... and that's how you {{verb}} it!",
           action: 'open',

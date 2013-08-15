@@ -30,44 +30,40 @@ describe 'CopyCopter', ->
 
   describe 'uploading missing translations', ->
     beforeEach ->
-      @options =
-        apiKey:   'key'
-        host:     'example.com'
-        username: 'user'
-        password: 'sekret'
-
-    it 'uploads the translation key and defaultValue when the translation does not exist', ->
+      @clock = sinon.useFakeTimers()
       @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
-      @jqXHR.resolve({ })
-      jQuery.ajax.restore()
-      @jqXHR = $.Deferred()
-      $.extend @jqXHR,
-        readyState:            0
-        setRequestHeader:      -> @
-        getAllResponseHeaders: ->
-        getResponseHeader:     ->
-        overrideMimeType:      -> @
-        abort:                 -> @reject(arguments); @
-        success:               @jqXHR.done
-        complete:              @jqXHR.done
-        error:                 @jqXHR.fail
 
-      sinon.stub(jQuery, 'ajax').returns(@jqXHR)
+      @copycopter.translate('step.one',   { defaultValue: 'Cut a hole in the %{item}.'                })
+      @copycopter.translate('step.two',   { defaultValue: 'Place your {{body_part}} in that %{item}.' })
+      @copycopter.translate('step.three', { defaultValue: 'Make her {{action}} that %{item}.'         })
 
-      @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+    afterEach ->
+      @clock.restore()
 
-      jQuery.ajax.should.have.been.calledWith({
+    it 'waits to upload translations', ->
+      jQuery.ajax.should.not.have.been.calledWith
         url:      '//example.com/api/v2/projects/key/draft_blurbs'
         dataType: 'jsonp'
-        data:     { 'en.step.one': 'Cut a hole in the box' }
-      })
+        data:
+          '_method': 'POST'
+          'en.step.one': 'Cut a hole in the %{item}.'
+          'en.step.two': 'Place your {{body_part}} in that %{item}.'
+          'en.step.three': 'Make her {{action}} that %{item}.'
+
+    it 'uploads new translations after 5 seconds', ->
+      @clock.tick(5001)
+      jQuery.ajax.should.have.been.calledWith
+        url:      '//example.com/api/v2/projects/key/draft_blurbs'
+        dataType: 'jsonp'
+        data:
+          '_method': 'POST'
+          'en.step.one': 'Cut a hole in the %{item}.'
+          'en.step.two': 'Place your {{body_part}} in that %{item}.'
+          'en.step.three': 'Make her {{action}} that %{item}.'
 
   describe '#translate', ->
     beforeEach ->
-      @copycopter = new CopyCopter({
-        apiKey: 'key',
-        host:   'example.com'
-      })
+      @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
 
     it 'fetches translations when it has none', ->
       jQuery.ajax.should.have.been.calledWith({
@@ -84,7 +80,7 @@ describe 'CopyCopter', ->
       @jqXHR.resolve({ })
       @copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' }).should.eql 'Cut a hole in the box'
 
-    it 'returns the undefined when the defaultValue is not provided', ->
+    it 'returns undefined when the defaultValue is not provided', ->
       @jqXHR.resolve({ })
       expect( @copycopter.translate('step.one') ).to.not.exist
 
@@ -118,8 +114,8 @@ describe 'CopyCopter', ->
 
       @copycopter.translate('step.two', {
         defaultValue: 'Put your %{item} in that box',
-        item: 'junk'
-      }).should.eql 'Put your junk in that box'
+        item: 'hand'
+      }).should.eql 'Put your hand in that box'
 
       @copycopter.translate('step.three', {
         defaultValue: "Make her %{action} the %{item}... and that's how you {{verb}} it!",

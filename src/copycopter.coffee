@@ -11,13 +11,26 @@ CopyCopter = do ->
     translations = {}
     callbacks    = []
 
+    newTranslations = {}
+    setTimeout ->
+      if Object.keys(newTranslations).length
+        uploadNewTranslations()
+    , 5000
+
     drain = ->
       cb() while cb = callbacks.shift()
 
-    createTranslation = (key, defaultValue) ->
-      data = {}
-      data["en.#{key}"] = defaultValue
-      jQuery.ajax({ url: postUrl, dataType: 'jsonp', data: data })
+    queueTranslation = (key, defaultValue) ->
+      newTranslations["en.#{key}"] = defaultValue
+
+    uploadNewTranslations = ->
+      payload = jQuery.extend({ _method: 'POST' }, newTranslations)
+      jQuery.ajax({
+        url:       postUrl
+        dataType:  'jsonp'
+        data:      payload
+      }).success ->
+        newTranslations = {}
 
     lookup = (key, scope) ->
       scope = ['en'].concat key.split('.')
@@ -34,7 +47,7 @@ CopyCopter = do ->
     translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
-      createTranslation(key, defaultValue) unless hasTranslation(key)
+      queueTranslation(key, defaultValue) unless hasTranslation(key)
       interpolate((lookup(key) || defaultValue), options)
 
     onTranslationsLoaded = (callback) ->

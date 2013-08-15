@@ -23,7 +23,8 @@
     "mocha-phantomjs": "2.0.2",
     "phantomjs": "1.9.1-0",
     "sinon-chai": "2.4.0",
-    "sinon": "1.7.2"
+    "sinon": "1.7.2",
+    "strata": "0.20.1"
   },
   "engines": {
     "node": "*"
