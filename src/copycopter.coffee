@@ -12,6 +12,7 @@ CopyCopter = do ->
     callbacks    = []
 
     newTranslations = {}
+
     setTimeout ->
       if Object.keys(newTranslations).length
         uploadNewTranslations()
@@ -24,11 +25,10 @@ CopyCopter = do ->
       newTranslations["en.#{key}"] = defaultValue
 
     uploadNewTranslations = ->
-      payload = jQuery.extend({ _method: 'POST' }, newTranslations)
       jQuery.ajax({
         url:       postUrl
         dataType:  'jsonp'
-        data:      payload
+        data:      jQuery.extend({ _method: 'POST' }, newTranslations)
       }).success ->
         newTranslations = {}
 
