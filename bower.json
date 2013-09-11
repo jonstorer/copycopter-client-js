@@ -18,6 +18,7 @@
     "test",
     "**/.*",
     "CakeFile",
-    "package.json"
+    "package.json",
+    "index.js"
   ]
 }
