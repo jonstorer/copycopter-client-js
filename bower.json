@@ -16,6 +16,8 @@
     "examples",
     "src",
     "test",
-    "**/.*"
+    "**/.*",
+    "CakeFile",
+    "package.json"
   ]
 }
