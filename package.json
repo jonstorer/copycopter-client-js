@@ -19,6 +19,7 @@
   "devDependencies": {
     "chai": "1.6.0",
     "coffee-script": "1.6.2",
+    "minify": "*",
     "mocha": "1.9.0",
     "mocha-phantomjs": "2.0.2",
     "phantomjs": "1.9.1-0",
