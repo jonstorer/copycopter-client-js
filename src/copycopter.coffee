@@ -46,7 +46,7 @@ CopyCopter = do ->
       request = jQuery.ajax({ url: getUrl, cache: true, dataType: 'jsonp' })
       request.success (data) -> translations = data
       request.success        -> isLoaded = true
-      request.always drain
+      request.success        -> drain()
 
     #public
 
