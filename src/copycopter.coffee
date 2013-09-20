@@ -8,7 +8,7 @@ CopyCopter = do ->
       throw 'please provide the apiKey'
 
     getUrl       = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
-    postUrl      = "//#{host}/api/v2/projects/#{apiKey}/draft_blurbs"
+    postUrl      = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/draft_blurbs"
     isLoaded     = false
     translations = {}
     callbacks    = []
@@ -36,7 +36,7 @@ CopyCopter = do ->
     translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
-      createTranslation(key, defaultValue) unless hasTranslation(key)
+      #createTranslation(key, defaultValue) unless hasTranslation(key)
       interpolate((lookup(key) || defaultValue), options)
 
     onTranslationsLoaded = (callback) ->
