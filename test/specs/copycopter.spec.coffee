@@ -61,7 +61,7 @@ describe 'CopyCopter', ->
       })
 
   describe 'no host provided', ->
-    it 'makes relative requests when no host is provieded', ->
+    it 'makes relative requests when no host is provided', ->
       new CopyCopter({ apiKey: 'key' })
 
       jQuery.ajax.should.have.been.calledWith({
