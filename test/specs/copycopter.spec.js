@@ -33,21 +33,13 @@
           host: 'example.com'
         };
       });
-      it('throws an error without an apiKey', function() {
+      return it('throws an error without an apiKey', function() {
         var _this = this;
 
         delete this.options.apiKey;
         return (function() {
           return new CopyCopter(_this.options);
         }).should.Throw('please provide the apiKey');
-      });
-      return it('throws an error without a host', function() {
-        var _this = this;
-
-        delete this.options.host;
-        return (function() {
-          return new CopyCopter(_this.options);
-        }).should.Throw('please provide the host');
       });
     });
     describe('uploading missing translations', function() {
@@ -95,6 +87,18 @@
           data: {
             'en.step.one': 'Cut a hole in the box'
           }
+        });
+      });
+    });
+    describe('no host provided', function() {
+      return it('makes relative requests when no host is provieded', function() {
+        this.copycopter = new CopyCopter({
+          apiKey: 'key'
+        });
+        return jQuery.ajax.should.have.been.calledWith({
+          url: '/api/v2/projects/key/published_blurbs?format=hierarchy',
+          cache: true,
+          dataType: 'jsonp'
         });
       });
     });
