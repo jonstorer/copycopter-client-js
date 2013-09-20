@@ -2,10 +2,12 @@ CopyCopter = do ->
   create = (options) ->
 
     # state variables
-    throw 'please provide the host'   unless host   = options.host
-    throw 'please provide the apiKey' unless apiKey = options.apiKey
+    host   = options.host
+    apiKey = options.apiKey
+    unless apiKey?
+      throw 'please provide the apiKey'
 
-    getUrl       = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
+    getUrl       = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
     postUrl      = "//#{host}/api/v2/projects/#{apiKey}/draft_blurbs"
     isLoaded     = false
     translations = {}

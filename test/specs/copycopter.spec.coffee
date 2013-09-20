@@ -26,10 +26,6 @@ describe 'CopyCopter', ->
       delete @options.apiKey
       (=> new CopyCopter @options ).should.Throw('please provide the apiKey')
 
-    it 'throws an error without a host', ->
-      delete @options.host
-      (=> new CopyCopter @options ).should.Throw('please provide the host')
-
   describe 'uploading missing translations', ->
     beforeEach ->
       @options =
@@ -62,6 +58,16 @@ describe 'CopyCopter', ->
         url:      '//example.com/api/v2/projects/key/draft_blurbs'
         dataType: 'jsonp'
         data:     { 'en.step.one': 'Cut a hole in the box' }
+      })
+
+  describe 'no host provided', ->
+    it 'makes relative requests when no host is provided', ->
+      new CopyCopter({ apiKey: 'key' })
+
+      jQuery.ajax.should.have.been.calledWith({
+        url:       '/api/v2/projects/key/published_blurbs?format=hierarchy'
+        cache:     true
+        dataType:  'jsonp'
       })
 
   describe '#translate', ->
