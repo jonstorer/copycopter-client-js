@@ -42,152 +42,110 @@
         }).should.Throw('please provide the apiKey');
       });
     });
-    describe('uploading missing translations', function() {
-      beforeEach(function() {
-        return this.options = {
-          apiKey: 'key',
-          host: 'example.com',
-          username: 'user',
-          password: 'sekret'
-        };
-      });
-      return it('uploads the translation key and defaultValue when the translation does not exist', function() {
-        this.copycopter = new CopyCopter({
-          apiKey: 'key',
-          host: 'example.com'
-        });
-        this.jqXHR.resolve({});
-        jQuery.ajax.restore();
-        this.jqXHR = $.Deferred();
-        $.extend(this.jqXHR, {
-          readyState: 0,
-          setRequestHeader: function() {
-            return this;
-          },
-          getAllResponseHeaders: function() {},
-          getResponseHeader: function() {},
-          overrideMimeType: function() {
-            return this;
-          },
-          abort: function() {
-            this.reject(arguments);
-            return this;
-          },
-          success: this.jqXHR.done,
-          complete: this.jqXHR.done,
-          error: this.jqXHR.fail
-        });
-        sinon.stub(jQuery, 'ajax').returns(this.jqXHR);
-        this.copycopter.translate('step.one', {
-          defaultValue: 'Cut a hole in the box'
-        });
-        return jQuery.ajax.should.have.been.calledWith({
-          url: '//example.com/api/v2/projects/key/draft_blurbs',
-          dataType: 'jsonp',
-          data: {
-            'en.step.one': 'Cut a hole in the box'
-          }
-        });
-      });
-    });
-    describe('no host provided', function() {
-      return it('makes relative requests when no host is provieded', function() {
-        this.copycopter = new CopyCopter({
-          apiKey: 'key'
-        });
-        return jQuery.ajax.should.have.been.calledWith({
-          url: '/api/v2/projects/key/published_blurbs?format=hierarchy',
-          cache: true,
-          dataType: 'jsonp'
-        });
-      });
-    });
     describe('#translate', function() {
-      beforeEach(function() {
-        return this.copycopter = new CopyCopter({
-          apiKey: 'key',
-          host: 'example.com'
+      describe('no host provided', function() {
+        beforeEach(function() {
+          return this.copycopter = new CopyCopter({
+            apiKey: 'key'
+          });
         });
-      });
-      it('fetches translations when it has none', function() {
-        return jQuery.ajax.should.have.been.calledWith({
-          url: '//example.com/api/v2/projects/key/published_blurbs?format=hierarchy',
-          cache: true,
-          dataType: 'jsonp'
+        it('makes relative requests when no host is provided', function() {
+          return jQuery.ajax.should.have.been.calledWith({
+            url: '/api/v2/projects/key/published_blurbs?format=hierarchy',
+            cache: true,
+            dataType: 'jsonp'
+          });
         });
+        return it('uploads draft blurbs to a relative path');
       });
-      it('returns found translations', function() {
-        this.jqXHR.resolve({
-          en: {
-            step: {
-              one: 'Cut a hole in a box'
+      return describe('host provided', function() {
+        beforeEach(function() {
+          return this.copycopter = new CopyCopter({
+            apiKey: 'key',
+            host: 'example.com'
+          });
+        });
+        it('fetches translations when it has none', function() {
+          return jQuery.ajax.should.have.been.calledWith({
+            url: '//example.com/api/v2/projects/key/published_blurbs?format=hierarchy',
+            cache: true,
+            dataType: 'jsonp'
+          });
+        });
+        it('uploads the translation key and defaultValue when the translation does not exist');
+        it('returns found translations', function() {
+          this.jqXHR.resolve({
+            en: {
+              step: {
+                one: 'Cut a hole in a box'
+              }
             }
-          }
+          });
+          return this.copycopter.translate('step.one', {
+            defaultValue: 'Cut a whole in the box'
+          }).should.eql('Cut a hole in a box');
         });
-        return this.copycopter.translate('step.one', {
-          defaultValue: 'Cut a whole in the box'
-        }).should.eql('Cut a hole in a box');
-      });
-      it('returns the default translation when not found', function() {
-        this.jqXHR.resolve({});
-        return this.copycopter.translate('step.one', {
-          defaultValue: 'Cut a hole in the box'
-        }).should.eql('Cut a hole in the box');
-      });
-      it('returns the undefined when the defaultValue is not provided', function() {
-        this.jqXHR.resolve({});
-        return expect(this.copycopter.translate('step.one')).to.not.exist;
-      });
-      it('interpolates %{key}', function() {
-        this.jqXHR.resolve({
-          en: {
-            step: {
-              one: 'Cut a %{shape} in a box'
+        it('returns the default translation when not found', function() {
+          this.jqXHR.resolve({});
+          return this.copycopter.translate('step.one', {
+            defaultValue: 'Cut a hole in the box'
+          }).should.eql('Cut a hole in the box');
+        });
+        it('returns the undefined when the defaultValue is not provided', function() {
+          this.jqXHR.resolve({});
+          return expect(this.copycopter.translate('step.one')).to.not.exist;
+        });
+        it('interpolates %{key}', function() {
+          this.jqXHR.resolve({
+            en: {
+              step: {
+                one: 'Cut a %{shape} in a box'
+              }
             }
-          }
+          });
+          return this.copycopter.translate('step.one', {
+            defaultValue: 'Cut a %{shape} in the box',
+            shape: 'cresent'
+          }).should.eql('Cut a cresent in a box');
         });
-        return this.copycopter.translate('step.one', {
-          defaultValue: 'Cut a %{shape} in the box',
-          shape: 'cresent'
-        }).should.eql('Cut a cresent in a box');
-      });
-      it('interpolates {{key}}', function() {
-        this.jqXHR.resolve({
-          en: {
-            step: {
-              one: 'Cut a {{shape}} in a box'
+        it('interpolates {{key}}', function() {
+          this.jqXHR.resolve({
+            en: {
+              step: {
+                one: 'Cut a {{shape}} in a box'
+              }
             }
-          }
+          });
+          return this.copycopter.translate('step.one', {
+            defaultValue: 'Cut a {{shape}} in the box',
+            shape: 'cresent'
+          }).should.eql('Cut a cresent in a box');
         });
-        return this.copycopter.translate('step.one', {
-          defaultValue: 'Cut a {{shape}} in the box',
-          shape: 'cresent'
-        }).should.eql('Cut a cresent in a box');
-      });
-      return it('works with many translations', function() {
-        this.jqXHR.resolve({
-          en: {
-            step: {
-              one: 'Cut a %{shape} in a box',
-              two: 'Put your {{item}} in that box',
-              three: "Make her %{action} the %{item}... and that's how you {{verb}} it!"
+        return it('works with many translations', function() {
+          this.jqXHR.resolve({
+            en: {
+              step: {
+                one: 'Cut a %{shape} in a box',
+                two: 'Put your {{item}} in that box',
+                three: "Make her %{action} the %{item}... and that's how you {{verb}} it!"
+              }
             }
-          }
+          });
+          this.copycopter.translate('step.one', {
+            defaultValue: 'Cut a %{shape} in the box',
+            shape: 'hole'
+          }).should.eql('Cut a hole in a box');
+          this.copycopter.translate('step.two', {
+            defaultValue: 'Put your %{item} in that box',
+            item: 'junk'
+          }).should.eql('Put your junk in that box');
+          return this.copycopter.translate('step.three', {
+            defaultValue: "Make her %{action} the %{item}... and that's how you {{verb}} it!",
+            action: 'open',
+            item: 'container',
+            verb: 'jump'
+          }).should.eql("Make her open the container... and that's how you jump it!");
         });
-        this.copycopter.translate('step.one', {
-          defaultValue: 'Cut a %{shape} in the box',
-          shape: 'hole'
-        }).should.eql('Cut a hole in a box');
-        this.copycopter.translate('step.two', {
-          defaultValue: 'Put your %{item} in that box',
-          item: 'junk'
-        }).should.eql('Put your junk in that box');
-        return this.copycopter.translate('step.three', {
-          defaultValue: "Make her %{action} the %{item}... and that's how you {{verb}} it!",
-          action: 'open',
-          item: 'container',
-          verb: 'jump'
-        }).should.eql("Make her open the container... and that's how you jump it!");
       });
     });
     describe('#onTranslationsLoaded', function() {
