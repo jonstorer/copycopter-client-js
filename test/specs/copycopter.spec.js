@@ -51,7 +51,7 @@
         });
         it('makes relative requests when no host is provided', function() {
           return jQuery.ajax.should.have.been.calledWith({
-            url: '/api/v2/projects/key/published_blurbs?format=hierarchy',
+            url: '/api/v2/projects/key/published_blurbs',
             cache: true,
             dataType: 'jsonp'
           });
@@ -67,7 +67,7 @@
         });
         it('fetches translations when it has none', function() {
           return jQuery.ajax.should.have.been.calledWith({
-            url: '//example.com/api/v2/projects/key/published_blurbs?format=hierarchy',
+            url: '//example.com/api/v2/projects/key/published_blurbs',
             cache: true,
             dataType: 'jsonp'
           });
@@ -75,11 +75,7 @@
         it('uploads the translation key and defaultValue when the translation does not exist');
         it('returns found translations', function() {
           this.jqXHR.resolve({
-            en: {
-              step: {
-                one: 'Cut a hole in a box'
-              }
-            }
+            'en.step.one': 'Cut a hole in a box'
           });
           return this.copycopter.translate('step.one', {
             defaultValue: 'Cut a whole in the box'
@@ -97,11 +93,7 @@
         });
         it('interpolates %{key}', function() {
           this.jqXHR.resolve({
-            en: {
-              step: {
-                one: 'Cut a %{shape} in a box'
-              }
-            }
+            'en.step.one': 'Cut a %{shape} in a box'
           });
           return this.copycopter.translate('step.one', {
             defaultValue: 'Cut a %{shape} in the box',
@@ -110,11 +102,7 @@
         });
         it('interpolates {{key}}', function() {
           this.jqXHR.resolve({
-            en: {
-              step: {
-                one: 'Cut a {{shape}} in a box'
-              }
-            }
+            'en.step.one': 'Cut a {{shape}} in a box'
           });
           return this.copycopter.translate('step.one', {
             defaultValue: 'Cut a {{shape}} in the box',
@@ -123,13 +111,9 @@
         });
         return it('works with many translations', function() {
           this.jqXHR.resolve({
-            en: {
-              step: {
-                one: 'Cut a %{shape} in a box',
-                two: 'Put your {{item}} in that box',
-                three: "Make her %{action} the %{item}... and that's how you {{verb}} it!"
-              }
-            }
+            'en.step.one': 'Cut a %{shape} in a box',
+            'en.step.two': 'Put your {{item}} in that box',
+            'en.step.three': "Make her %{action} the %{item}... and that's how you {{verb}} it!"
           });
           this.copycopter.translate('step.one', {
             defaultValue: 'Cut a %{shape} in the box',
@@ -159,15 +143,11 @@
       it('takes a callback and fires the callback when the translations have loaded', function() {
         this.copycopter.onTranslationsLoaded(this.callback);
         this.callback.should.not.have.been.called;
-        this.jqXHR.resolve({
-          en: {}
-        });
+        this.jqXHR.resolve({});
         return this.callback.should.have.been.calledOnce;
       });
       return it('takes a callback and calls the callback if already loaded', function() {
-        this.jqXHR.resolve({
-          en: {}
-        });
+        this.jqXHR.resolve({});
         this.copycopter.onTranslationsLoaded(this.callback);
         return this.callback.should.have.been.calledOnce;
       });
@@ -179,11 +159,7 @@
           host: 'example.com'
         });
         return this.jqXHR.resolve({
-          en: {
-            step: {
-              one: 'Cut a hole in a box'
-            }
-          }
+          'en.step.one': 'Cut a hole in a box'
         });
       });
       it('returns true when the key exists', function() {
