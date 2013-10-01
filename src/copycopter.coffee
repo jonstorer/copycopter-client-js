@@ -2,11 +2,13 @@ CopyCopter = do ->
   create = (options) ->
 
     # state variables
-    throw 'please provide the host'   unless host   = options.host
-    throw 'please provide the apiKey' unless apiKey = options.apiKey
+    host   = options.host
+    apiKey = options.apiKey
+    unless apiKey?
+      throw 'please provide the apiKey'
 
-    getUrl       = "//#{host}/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
-    postUrl      = "//#{host}/api/v2/projects/#{apiKey}/draft_blurbs"
+    getUrl       = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
+    postUrl      = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/draft_blurbs"
     isLoaded     = false
     translations = {}
     callbacks    = []
@@ -47,7 +49,7 @@ CopyCopter = do ->
     translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
-      queueTranslation(key, defaultValue) unless hasTranslation(key)
+      #queueTranslation(key, defaultValue) unless hasTranslation(key)
       interpolate((lookup(key) || defaultValue), options)
 
     onTranslationsLoaded = (callback) ->
@@ -59,7 +61,7 @@ CopyCopter = do ->
       request = jQuery.ajax({ url: getUrl, cache: true, dataType: 'jsonp' })
       request.success (data) -> translations = data
       request.success        -> isLoaded = true
-      request.always drain
+      request.success        -> drain()
 
     #public
 

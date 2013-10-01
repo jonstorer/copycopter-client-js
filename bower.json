@@ -1,0 +1,23 @@
+{
+  "name": "copycopter-client",
+  "version": "0.0.12",
+  "main": [
+    "lib/copycopter.js",
+    "lib/copycopter.min.js"
+  ],
+  "author": "Jonathan Storer",
+  "keywords": [
+    "copycopter",
+    "I18n"
+  ],
+  "license": "MIT",
+  "homepage": "http://github.com/jonstorer/copycopter-client-js",
+  "ignore": [
+    "examples",
+    "src",
+    "test",
+    "**/.*",
+    "CakeFile",
+    "package.json"
+  ]
+}
