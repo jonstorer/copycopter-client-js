@@ -13,23 +13,27 @@
   "licenses": [
     {
       "type": "MIT",
-      "url":  "http://github.com/jonstorer/copycopter-client-js/raw/master/LICENSE"
+      "url": "http://github.com/jonstorer/copycopter-client-js/raw/master/LICENSE"
     }
   ],
   "devDependencies": {
-    "chai": "1.6.0",
     "coffee-script": "1.6.2",
     "minify": "*",
-    "mocha": "1.9.0",
-    "mocha-phantomjs": "2.0.2",
-    "phantomjs": "1.9.1-0",
-    "sinon-chai": "2.4.0",
-    "sinon": "1.7.2"
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-jasmine": "~0.1.3",
+    "karma-requirejs": "~0.1.0",
+    "karma-coffee-preprocessor": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma": "~0.10.2",
+    "mocha": "~1.13.0",
+    "karma-mocha": "~0.1.0",
+    "karma-chai-plugins": "~0.1.3"
   },
   "engines": {
     "node": "*"
   },
-  "scripts" : {
-    "test": "./node_modules/.bin/mocha-phantomjs test/index.html"
-  }
+  "scripts": {}
 }
