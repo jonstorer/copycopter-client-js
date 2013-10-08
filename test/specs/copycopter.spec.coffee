@@ -32,7 +32,7 @@ describe 'CopyCopter', ->
 
       it 'makes relative requests when no host is provided', ->
         jQuery.ajax.should.have.been.calledWith({
-          url:       '/api/v2/projects/key/published_blurbs?format=hierarchy'
+          url:       '/api/v2/projects/key/published_blurbs'
           cache:     true
           dataType:  'jsonp'
         })
@@ -49,14 +49,11 @@ describe 'CopyCopter', ->
 
     describe 'host provided', ->
       beforeEach ->
-        @copycopter = new CopyCopter({
-          apiKey: 'key',
-          host:   'example.com'
-        })
+        @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
 
       it 'fetches translations when it has none', ->
         jQuery.ajax.should.have.been.calledWith({
-          url:       '//example.com/api/v2/projects/key/published_blurbs?format=hierarchy'
+          url:       '//example.com/api/v2/projects/key/published_blurbs'
           cache:     true
           dataType:  'jsonp'
         })
@@ -72,7 +69,7 @@ describe 'CopyCopter', ->
         #})
 
       it 'returns found translations', ->
-        @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
+        @jqXHR.resolve({'en.step.one': 'Cut a hole in a box'})
         @copycopter.translate('step.one', { defaultValue: 'Cut a whole in the box' }).should.eql 'Cut a hole in a box'
 
       it 'returns the default translation when not found', ->
@@ -84,27 +81,25 @@ describe 'CopyCopter', ->
         expect( @copycopter.translate('step.one') ).to.not.exist
 
       it 'interpolates %{key}', ->
-        @jqXHR.resolve({ en: { step: { one: 'Cut a %{shape} in a box' } } })
+        @jqXHR.resolve({ 'en.step.one': 'Cut a %{shape} in a box' })
         @copycopter.translate('step.one', {
           defaultValue: 'Cut a %{shape} in the box',
           shape: 'cresent'
         }).should.eql 'Cut a cresent in a box'
 
       it 'interpolates {{key}}', ->
-        @jqXHR.resolve({ en: { step: { one: 'Cut a {{shape}} in a box' } } })
+        @jqXHR.resolve({ 'en.step.one': 'Cut a {{shape}} in a box' })
         @copycopter.translate('step.one', {
           defaultValue: 'Cut a {{shape}} in the box',
           shape: 'cresent'
         }).should.eql 'Cut a cresent in a box'
 
       it 'works with many translations', ->
-        @jqXHR.resolve({ en: {
-          step: {
-            one:   'Cut a %{shape} in a box',
-            two:   'Put your {{item}} in that box',
-            three: "Make her %{action} the %{item}... and that's how you {{verb}} it!"
-          }
-        } })
+        @jqXHR.resolve({
+          'en.step.one':   'Cut a %{shape} in a box',
+          'en.step.two':   'Put your {{item}} in that box',
+          'en.step.three': "Make her %{action} the %{item}... and that's how you {{verb}} it!",
+        })
 
         @copycopter.translate('step.one', {
           defaultValue: 'Cut a %{shape} in the box',
@@ -131,18 +126,18 @@ describe 'CopyCopter', ->
     it 'takes a callback and fires the callback when the translations have loaded', ->
       @copycopter.onTranslationsLoaded @callback
       @callback.should.not.have.been.called
-      @jqXHR.resolve({ en: {} })
+      @jqXHR.resolve({ })
       @callback.should.have.been.calledOnce
 
     it 'takes a callback and calls the callback if already loaded', ->
-      @jqXHR.resolve({ en: {} })
+      @jqXHR.resolve({ })
       @copycopter.onTranslationsLoaded @callback
       @callback.should.have.been.calledOnce
 
   describe '#hasTranslation', ->
     beforeEach ->
       @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
-      @jqXHR.resolve({ en: { step: { one: 'Cut a hole in a box' } } })
+      @jqXHR.resolve({'en.step.one': 'Cut a hole in a box'})
 
     it 'returns true when the key exists', ->
       @copycopter.hasTranslation('step.one').should.be.true

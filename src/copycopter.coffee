@@ -7,7 +7,7 @@ CopyCopter = do ->
     unless apiKey?
       throw 'please provide the apiKey'
 
-    getUrl       = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/published_blurbs?format=hierarchy"
+    getUrl       = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/published_blurbs"
     postUrl      = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/draft_blurbs"
     isLoaded     = false
     translations = {}
@@ -35,10 +35,7 @@ CopyCopter = do ->
         newTranslations = {}
 
     lookup = (key, scope) ->
-      scope = ['en'].concat key.split('.')
-      msg = translations
-      msg = msg?[key] for key in scope
-      msg if msg?
+      translations["en.#{key}"]
 
     interpolate = (msg, scope) ->
       for key, value of scope
