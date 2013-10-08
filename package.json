@@ -27,5 +27,7 @@
   "engines": {
     "node": "*"
   },
-  "scripts": {}
+  "scripts": {
+    "test": "./node_modules/.bin/karma start --singleRun=true"
+  }
 }

@@ -13,9 +13,9 @@ module.exports = (config) ->
 
     # list of files / patterns to load in the browser
     files: [
-      'specs/support/*',
+      'test/lib/*',
       'src/copycopter.coffee',
-      'specs/*.spec.coffee'
+      'test/specs/*.spec.coffee'
     ]
 
     # list of files to exclude
@@ -33,7 +33,7 @@ module.exports = (config) ->
 
     # level of logging
     # possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_DEBUG
+    logLevel: config.LOG_WARN
 
     # enable / disable watching file and executing tests whenever any file changes
     autoWatch: true
