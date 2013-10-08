@@ -1,7 +1,7 @@
 {
   "name": "copycopter",
   "description": "A CopyCopter client written in Javascript",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "Jonathon Storer <jonathon.scott.storer@gmail.com>",
   "homepage": [
     "http://github.com/jonstorer/copycopter-client-js"
@@ -13,23 +13,21 @@
   "licenses": [
     {
       "type": "MIT",
-      "url":  "http://github.com/jonstorer/copycopter-client-js/raw/master/LICENSE"
+      "url": "http://github.com/jonstorer/copycopter-client-js/raw/master/LICENSE"
     }
   ],
   "devDependencies": {
-    "chai": "1.6.0",
-    "coffee-script": "1.6.2",
-    "minify": "*",
-    "mocha": "1.9.0",
-    "mocha-phantomjs": "2.0.2",
-    "phantomjs": "1.9.1-0",
-    "sinon-chai": "2.4.0",
-    "sinon": "1.7.2"
+    "coffee-script":              "1.6.3",
+    "minify":                     "*",
+    "karma":                      "~0.10.2",
+    "karma-coffee-preprocessor":  "~0.1.0",
+    "karma-mocha":                "*",
+    "karma-sinon-chai":           "*"
   },
   "engines": {
     "node": "*"
   },
-  "scripts" : {
-    "test": "./node_modules/.bin/mocha-phantomjs test/index.html"
+  "scripts": {
+    "test": "./node_modules/.bin/karma start --singleRun=true"
   }
 }
