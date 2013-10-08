@@ -8,13 +8,14 @@ module.exports = (config) ->
     basePath: ''
 
     # frameworks to use
-    frameworks: ['mocha', 'chai', 'sinon-chai']
+    # frameworks: ['mocha', 'chai', 'sinon-chai']
+    frameworks: ['mocha', 'sinon-chai']
 
     # list of files / patterns to load in the browser
     files: [
-      'src/*.coffee',
-      'test/lib/*',
-      'test/spec/*.spec.coffee'
+      'specs/support/*',
+      'src/copycopter.coffee',
+      'specs/*.spec.coffee'
     ]
 
     # list of files to exclude
