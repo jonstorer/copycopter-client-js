@@ -18,16 +18,44 @@ describe 'CopyCopter', ->
 
   describe 'initializing to translate', ->
     beforeEach ->
-      @options =
-        apiKey: 'key'
-        host:   'example.com'
+      @options = { apiKey: 'key', host: 'example.com' }
 
     it 'throws an error without an apiKey', ->
       delete @options.apiKey
       (=> new CopyCopter @options ).should.Throw('please provide the apiKey')
 
-
   describe '#translate', ->
+
+    describe 'missing translations', ->
+      it 'uploads draft blurbs when uploadMissing is on', ->
+        copycopter = new CopyCopter({ apiKey: 'key', uploadMissing: true })
+        copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+
+        jQuery.ajax.should.have.been.calledWith({
+          url:      '/api/v2/projects/key/draft_blurbs'
+          dataType: 'jsonp'
+          data:     { 'en.step.one': 'Cut a hole in the box' }
+        })
+
+      it 'does not uploads draft blurbs when uploadMissing is off', ->
+        copycopter = new CopyCopter({ apiKey: 'key', uploadMissing: false })
+        copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+
+        jQuery.ajax.should.not.have.been.calledWith({
+          url:      '/api/v2/projects/key/draft_blurbs'
+          dataType: 'jsonp'
+          data:     { 'en.step.one': 'Cut a hole in the box' }
+        })
+
+      it 'does not uploads draft blurbs when uploadMissing is not set', ->
+        copycopter = new CopyCopter({ apiKey: 'key' })
+        copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
+
+        jQuery.ajax.should.not.have.been.calledWith({
+          url:      '/api/v2/projects/key/draft_blurbs'
+          dataType: 'jsonp'
+          data:     { 'en.step.one': 'Cut a hole in the box' }
+        })
 
     describe 'no host provided', ->
       beforeEach ->
@@ -40,16 +68,6 @@ describe 'CopyCopter', ->
           dataType:  'jsonp'
         })
 
-      it 'uploads draft blurbs to a relative path'# ,->
-        # pending
-        #@copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
-
-        #jQuery.ajax.should.have.been.calledWith({
-        #  url:      '/api/v2/projects/key/draft_blurbs'
-        #  dataType: 'jsonp'
-        #  data:     { 'en.step.one': 'Cut a hole in the box' }
-        #})
-
     describe 'host provided', ->
       beforeEach ->
         @copycopter = new CopyCopter({ apiKey: 'key', host: 'example.com' })
@@ -60,16 +78,6 @@ describe 'CopyCopter', ->
           cache:     true
           dataType:  'jsonp'
         })
-
-      it 'uploads the translation key and defaultValue when the translation does not exist'#, ->
-        # pending
-        #@copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
-
-        #jQuery.ajax.should.have.been.calledWith({
-        #  url:      '//example.com/api/v2/projects/key/draft_blurbs'
-        #  dataType: 'jsonp'
-        #  data:     { 'en.step.one': 'Cut a hole in the box' }
-        #})
 
       it 'returns found translations', ->
         @jqXHR.resolve({'en.step.one': 'Cut a hole in a box'})
