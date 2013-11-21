@@ -2,8 +2,10 @@ CopyCopter = do ->
   create = (options) ->
 
     # state variables
-    host   = options.host
-    apiKey = options.apiKey
+    host          = options.host
+    apiKey        = options.apiKey
+    uploadMissing = options.uploadMissing || false
+
     unless apiKey?
       throw 'please provide the apiKey'
 
@@ -16,13 +18,14 @@ CopyCopter = do ->
     drain = ->
       cb() while cb = callbacks.shift()
 
-    createTranslation = (key, defaultValue) ->
+    uploadTranslation = (key, defaultValue) ->
       data = {}
       data["en.#{key}"] = defaultValue
       jQuery.ajax({ url: postUrl, dataType: 'jsonp', data: data })
 
-    lookup = (key, scope) ->
-      translations["en.#{key}"]
+    hasTranslation = (key) -> !!lookup(key)
+
+    lookup = (key, scope) -> translations["en.#{key}"]
 
     interpolate = (msg, scope) ->
       for key, value of scope
@@ -33,13 +36,11 @@ CopyCopter = do ->
     translate = (key, options = {}) ->
       defaultValue = options.defaultValue
       delete options.defaultValue
-      #createTranslation(key, defaultValue) unless hasTranslation(key)
+      uploadTranslation(key, defaultValue) if uploadMissing && !hasTranslation(key)
       interpolate((lookup(key) || defaultValue), options)
 
     onTranslationsLoaded = (callback) ->
       if isLoaded then callback() else callbacks.push callback
-
-    hasTranslation = (key) -> !!lookup(key)
 
     do ->
       request = jQuery.ajax({ url: getUrl, cache: true, dataType: 'jsonp' })
