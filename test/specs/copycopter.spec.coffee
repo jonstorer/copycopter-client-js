@@ -32,9 +32,9 @@ describe 'CopyCopter', ->
         copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
 
         jQuery.ajax.should.have.been.calledWith({
-          url:      '/api/v2/projects/key/draft_blurbs'
+          url:      '/api/v2/projects/key/draft_blurbs/publish'
           dataType: 'jsonp'
-          data:     { 'en.step.one': 'Cut a hole in the box' }
+          data:     { blurbs: { 'en.step.one': 'Cut a hole in the box' } }
         })
 
       it 'does not uploads draft blurbs when uploadMissing is off', ->
@@ -42,9 +42,9 @@ describe 'CopyCopter', ->
         copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
 
         jQuery.ajax.should.not.have.been.calledWith({
-          url:      '/api/v2/projects/key/draft_blurbs'
+          url:      '/api/v2/projects/key/draft_blurbs/publish'
           dataType: 'jsonp'
-          data:     { 'en.step.one': 'Cut a hole in the box' }
+          data:     { blurbs: { 'en.step.one': 'Cut a hole in the box' } }
         })
 
       it 'does not uploads draft blurbs when uploadMissing is not set', ->
@@ -52,9 +52,9 @@ describe 'CopyCopter', ->
         copycopter.translate('step.one', { defaultValue: 'Cut a hole in the box' })
 
         jQuery.ajax.should.not.have.been.calledWith({
-          url:      '/api/v2/projects/key/draft_blurbs'
+          url:      '/api/v2/projects/key/draft_blurbs/publish'
           dataType: 'jsonp'
-          data:     { 'en.step.one': 'Cut a hole in the box' }
+          data:     { blurbs: { 'en.step.one': 'Cut a hole in the box' } }
         })
 
     describe 'no host provided', ->
