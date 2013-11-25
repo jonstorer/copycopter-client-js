@@ -21,7 +21,7 @@ CopyCopter = do ->
     uploadTranslation = (key, defaultValue) ->
       data = {}
       data["en.#{key}"] = defaultValue
-      jQuery.ajax({ url: postUrl, dataType: 'jsonp', data: data })
+      jQuery.ajax({ url: postUrl, dataType: 'jsonp', data: { blurbs: data } })
 
     hasTranslation = (key) -> !!lookup(key)
 
