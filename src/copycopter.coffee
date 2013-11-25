@@ -10,7 +10,7 @@ CopyCopter = do ->
       throw 'please provide the apiKey'
 
     getUrl       = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/published_blurbs"
-    postUrl      = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/draft_blurbs"
+    postUrl      = "#{ if host? then '//' + host else '' }/api/v2/projects/#{apiKey}/draft_blurbs/publish"
     isLoaded     = false
     translations = {}
     callbacks    = []
@@ -21,7 +21,7 @@ CopyCopter = do ->
     uploadTranslation = (key, defaultValue) ->
       data = {}
       data["en.#{key}"] = defaultValue
-      jQuery.ajax({ url: postUrl, dataType: 'jsonp', data: data })
+      jQuery.ajax({ url: postUrl, dataType: 'jsonp', data: { blurbs: data } })
 
     hasTranslation = (key) -> !!lookup(key)
 
