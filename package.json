@@ -1,7 +1,7 @@
 {
   "name": "copycopter",
   "description": "A CopyCopter client written in Javascript",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "author": "Jonathon Storer <jonathon.scott.storer@gmail.com>",
   "homepage": [
     "http://github.com/jonstorer/copycopter-client-js"
@@ -19,7 +19,7 @@
   "devDependencies": {
     "coffee-script":              "1.6.3",
     "minify":                     "*",
-    "karma":                      "~0.10.2",
+    "karma":                      "~0.12.0",
     "karma-coffee-preprocessor":  "~0.1.0",
     "karma-mocha":                "*",
     "karma-sinon-chai":           "*"

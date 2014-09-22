@@ -105,6 +105,13 @@ describe 'CopyCopter', ->
           shape: 'cresent'
         }).should.eql 'Cut a cresent in a box'
 
+      it 'interpolates globally', ->
+        @jqXHR.resolve({ 'en.step.one': 'A {{noun}} is a {{noun}}, no matter how small' })
+        @copycopter.translate('step.one', {
+          defaultValue: 'A {{noun}} is a {{noun}}, no matter how small',
+          noun: 'person'
+        }).should.eql 'A person is a person, no matter how small'
+
       it 'works with many translations', ->
         @jqXHR.resolve({
           'en.step.one':   'Cut a %{shape} in a box',
