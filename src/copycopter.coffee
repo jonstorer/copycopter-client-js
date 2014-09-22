@@ -29,8 +29,8 @@ CopyCopter = do ->
 
     interpolate = (msg, scope) ->
       for key, value of scope
-        regex = new RegExp("(.*)(?:\%|\{){#{key}}}?(.*)",'i')
-        msg = msg.replace(regex, "$1#{value}$2") if regex.test(msg)
+        regex = new RegExp("(?:\%|\{){#{key}}}?",'ig')
+        msg = msg.replace(regex, value)
       msg
 
     translate = (key, options = {}) ->
