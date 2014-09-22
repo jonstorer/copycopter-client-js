@@ -1,6 +1,6 @@
 {
   "name": "copycopter-client",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": [
     "lib/copycopter.js",
     "lib/copycopter.min.js"
